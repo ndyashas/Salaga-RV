@@ -12,8 +12,8 @@ $(core_name)_bin: obj_dir/V$(core_name)__ALL.o main_sim.cpp
 obj_dir/V$(core_name)__ALL.o: obj_dir/V$(core_name)__verFiles.dat
 	$(MAKE) -C obj_dir -f V$(core_name).mk
 
-obj_dir/V$(core_name)__verFiles.dat: hw-files/$(wildcard *.sv)
-	verilator -cc hw-files/*.sv
+obj_dir/V$(core_name)__verFiles.dat: ../rtl/$(wildcard *.sv)
+	verilator -cc ../rtl/*.sv
 
 clean:
 	$(RM) -rf obj_dir *_bin *.vcd
