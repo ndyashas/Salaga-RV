@@ -20,6 +20,9 @@ class CPU {
 	bool trace;
 
 public:
+	/* Set 'total_sim_ticks' to 0 for unbound simulation till
+	 * 'Ctrl + C' is pressed.
+	 */
 	CPU(unsigned long int total_sim_ticks = 100, bool trace = true);
 	~CPU(void);
 
@@ -36,6 +39,11 @@ CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks, bool trace)
 	this->cpu_mod = new CPU_mod;
 	this->tick_count = 0l;
 	this->total_sim_ticks = total_sim_ticks;
+	if (!total_sim_ticks) {
+		std::cout
+			<< "'Ctrl + C' to exit simulation"
+			<< std::endl;
+	}
 	this->trace = trace;
 	if (trace) {
 		Verilated::traceEverOn(true);
@@ -114,5 +122,5 @@ template<class CPU_mod>
 bool CPU<CPU_mod>::done(void)
 {
 	return (Verilated::gotFinish()
-		|| (this->tick_count >= this->total_sim_ticks));
+		|| ((this->total_sim_ticks != 0) && (this->tick_count >= this->total_sim_ticks)));
 }
