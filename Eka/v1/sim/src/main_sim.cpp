@@ -9,8 +9,9 @@ int main(int argc, char **argv)
 	Verilated::commandArgs(argc, argv);	
 
 	CPU<Veka_core_v1> *core = new CPU<Veka_core_v1>(100);
-
 	core->open_trace("eka_core_v1_sim.vcd");
+
+	core->reset();
 	while(!core->done()) {
 		core->tick();
 	}

@@ -12,7 +12,7 @@ module eka_core_v1
    (
     /* Inputs */
     clk,
-    resetb,
+    reset,
     instruction,
     mem_rd_data,
 
@@ -27,7 +27,7 @@ module eka_core_v1
 
    // Port wires and regesters
    input wire 			clk;           // Processor clock.
-   input wire 			resetb;        // Reset processor.
+   input wire 			reset;         // Reset processor.
    input wire [31:0] 		instruction;   // Fetched instruction from the memory.
    input wire [31:0] 		mem_rd_data;   // Read data coming from the memory.
 
