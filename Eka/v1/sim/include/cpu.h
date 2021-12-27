@@ -18,6 +18,16 @@ class CPU {
 	CPU_mod *cpu_mod;
 	VerilatedVcdC *tracer;
 	bool trace;
+	bool debug_print;
+	unsigned int inst_addr;
+	unsigned int data_addr;
+	unsigned int mem_wr_data;
+	unsigned short int mem_wr;
+	unsigned short int mem_rd;
+
+	void mem_wr_handler(void);
+	void mem_rd_handler(void);
+	void inst_handler(void);
 
 public:
 	/* Set 'total_sim_ticks' to 0 for unbound simulation till
@@ -69,6 +79,21 @@ void CPU<CPU_mod>::reset(void)
 }
 
 template<class CPU_mod>
+void CPU<CPU_mod>::mem_wr_handler(void)
+{
+}
+
+template<class CPU_mod>
+void CPU<CPU_mod>::mem_rd_handler(void)
+{
+}
+
+template<class CPU_mod>
+void CPU<CPU_mod>::inst_handler(void)
+{
+}
+
+template<class CPU_mod>
 void CPU<CPU_mod>::tick(void)
 {
 	this->tick_count++;
@@ -83,10 +108,32 @@ void CPU<CPU_mod>::tick(void)
 		       this->cpu_mod->inst_addr);
 	}
 
+	// Read the outputs from the processor here
+	this->mem_rd = this->cpu_mod->mem_rd;
+	this->mem_wr = this->cpu_mod->mem_wr;
+	this->inst_addr = this->cpu_mod->inst_addr;
+	this->data_addr = this->cpu_mod->data_addr;
+	this->mem_wr_data = this->cpu_mod->mem_wr_data;
+
 	if (this->trace && this->tracer) tracer->dump(10*this->tick_count-1);
 
 	this->cpu_mod->clk = 1;
 	this->cpu_mod->eval();
+
+	// Apply the data/instruction inputs here
+	// Uses 'data_addr'
+	if (this->mem_wr) {
+		// Uses 'mem_wr_data'
+		this->mem_wr_handler();
+	}
+
+	if (this->mem_rd) {
+		// Populates 'this->cpu_mod->mem_rd_data'
+		this->mem_rd_handler();
+	}
+
+	// Uses 'inst_addr' and populates 'this->cpu_mod->instruction'
+	this->inst_handler();
 
 	if (this->trace && this->tracer) tracer->dump(10*this->tick_count);
 
