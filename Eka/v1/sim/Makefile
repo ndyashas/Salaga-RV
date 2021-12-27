@@ -6,8 +6,9 @@ include_paths := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
 vinclude_src  := $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
 vflags        := -cc --trace
 cpp_src       := src/main_sim.cpp
+cpp_headers   := ./include/cpu.h
 
-$(core_name)_bin: obj_dir/V$(core_name)__ALL.o $(cpp_src)
+$(core_name)_bin: obj_dir/V$(core_name)__ALL.o $(cpp_src) $(cpp_headers)
 	g++ $(include_paths) $(vinclude_src) $^ -o $@
 
 obj_dir/V$(core_name)__ALL.o: obj_dir/V$(core_name)__verFiles.dat

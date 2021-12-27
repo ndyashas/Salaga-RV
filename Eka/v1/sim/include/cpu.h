@@ -23,7 +23,9 @@ public:
 	/* Set 'total_sim_ticks' to 0 for unbound simulation till
 	 * 'Ctrl + C' is pressed.
 	 */
-	CPU(unsigned long int total_sim_ticks = 100, bool trace = true);
+	CPU(unsigned long int total_sim_ticks = 100,
+	    bool trace = true,
+	    bool debug_print = true);
 	~CPU(void);
 
 	void reset(void);
@@ -34,7 +36,7 @@ public:
 };
 
 template<class CPU_mod>
-CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks, bool trace)
+CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks, bool trace, bool debug_print)
 {
 	this->cpu_mod = new CPU_mod;
 	this->tick_count = 0l;
@@ -48,6 +50,7 @@ CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks, bool trace)
 	if (trace) {
 		Verilated::traceEverOn(true);
 	}
+	this->debug_print = debug_print;
 }
 
 template<class CPU_mod>
@@ -73,7 +76,14 @@ void CPU<CPU_mod>::tick(void)
 	this->cpu_mod->clk = 0;
 	this->cpu_mod->eval();
 
-	if (this->trace && this->tracer) tracer->dump(10*this->tick_count-2);
+	if (this->debug_print) {
+		printf("Data addr: 0x%08x\n",
+		       this->cpu_mod->data_addr);
+		printf("Inst addr: 0x%08x\n",
+		       this->cpu_mod->inst_addr);
+	}
+
+	if (this->trace && this->tracer) tracer->dump(10*this->tick_count-1);
 
 	this->cpu_mod->clk = 1;
 	this->cpu_mod->eval();
