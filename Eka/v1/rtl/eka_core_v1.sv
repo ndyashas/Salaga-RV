@@ -7,7 +7,7 @@
 module eka_core_v1
   #(
     parameter ADDR_WIDTH=32,
-    parameter RESET_ADDR=32'h0000_0000
+    parameter RESET_ADDR=30'h0000_0000
     )
    (
     /* Inputs */
