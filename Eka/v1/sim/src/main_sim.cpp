@@ -3,6 +3,7 @@
 #include "Veka_core_v1.h"
 #include "verilated.h"
 #include "cpu.h"
+#include "memory_handler.h"
 
 int main(int argc, char **argv)
 {
