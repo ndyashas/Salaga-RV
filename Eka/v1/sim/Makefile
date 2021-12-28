@@ -5,8 +5,8 @@ VERILATOR_ROOT ?= $(shell bash -c 'verilator -V|grep VERILATOR_ROOT | head -1 | 
 include_paths := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
 vinclude_src  := $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
 vflags        := -cc --trace
-cpp_src       := src/main_sim.cpp
-cpp_headers   := ./include/cpu.h
+cpp_src       := $(wildcard src/*.cpp)
+cpp_headers   := $(wildcard include/*.h)
 
 $(core_name)_bin: obj_dir/V$(core_name)__ALL.o $(cpp_src) $(cpp_headers)
 	g++ $(include_paths) $(vinclude_src) $^ -o $@

@@ -10,9 +10,13 @@
 #include "verilated.h"
 #include <verilated_vcd_c.h>
 
+#ifndef __EKA_V1_CORE__
+#define __EKA_V1_CORE__
 
 template<class CPU_mod>
 class CPU {
+
+private:
 	unsigned long int tick_count;
 	unsigned long int total_sim_ticks;
 	CPU_mod *cpu_mod;
@@ -181,3 +185,5 @@ bool CPU<CPU_mod>::done(void)
 	return (Verilated::gotFinish()
 		|| ((this->total_sim_ticks != 0) && (this->tick_count >= this->total_sim_ticks)));
 }
+
+#endif
