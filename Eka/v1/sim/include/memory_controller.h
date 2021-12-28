@@ -8,7 +8,7 @@
 #ifndef __EKA_V1_MEM_HANDLER__
 #define __EKA_V1_MEM_HANDLER__
 
-class Memory_handler
+class Memory_controller
 {
 private:
 	unsigned int* l1_inst_cache;
@@ -18,14 +18,16 @@ private:
 
 public:
 
-	Memory_handler(unsigned int* l1_inst_cache = NULL,
-		       unsigned int* l1_data_cache = NULL);
-	~Memory_handler(void);
+	Memory_controller(unsigned int* l1_inst_cache = NULL,
+			  unsigned int* l1_data_cache = NULL);
+	~Memory_controller(void);
 
 	bool l1_inst_cache_access(unsigned int inst_addr,
 				  unsigned int& instruction);
 	bool l1_data_cache_access(unsigned int data_addr,
-				  unsigned int& mem_wr_data);
+				  unsigned int& mem_rd_data);
+	bool l1_data_cache_update(unsigned int data_addr,
+				  unsigned int mem_wr_data);
 };
 
 #endif

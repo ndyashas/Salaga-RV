@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "verilated.h"
 #include <verilated_vcd_c.h>
+#include "memory_controller.h"
 
 #ifndef __EKA_V1_CORE__
 #define __EKA_V1_CORE__
@@ -21,6 +22,7 @@ private:
 	unsigned long int total_sim_ticks;
 	CPU_mod *cpu_mod;
 	VerilatedVcdC *tracer;
+	Memory_controller* memory_controller;
 	bool trace;
 	bool debug_print;
 	unsigned int inst_addr;
@@ -38,6 +40,7 @@ public:
 	 * 'Ctrl + C' is pressed.
 	 */
 	CPU(unsigned long int total_sim_ticks = 100,
+	    Memory_controller* memory_controller = NULL,
 	    bool trace = true,
 	    bool debug_print = true);
 	~CPU(void);
@@ -50,7 +53,10 @@ public:
 };
 
 template<class CPU_mod>
-CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks, bool trace, bool debug_print)
+CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks,
+		  Memory_controller* memory_controller,
+		  bool trace,
+		  bool debug_print)
 {
 	this->cpu_mod = new CPU_mod;
 	this->tick_count = 0l;
@@ -65,6 +71,7 @@ CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks, bool trace, bool debug_prin
 		Verilated::traceEverOn(true);
 	}
 	this->debug_print = debug_print;
+	this->memory_controller = memory_controller;
 }
 
 template<class CPU_mod>
@@ -85,16 +92,28 @@ void CPU<CPU_mod>::reset(void)
 template<class CPU_mod>
 void CPU<CPU_mod>::mem_wr_handler(void)
 {
+	bool stall = this
+		->memory_controller
+		->l1_data_cache_update(this->data_addr,
+				       this->mem_wr_data);
 }
 
 template<class CPU_mod>
 void CPU<CPU_mod>::mem_rd_handler(void)
 {
+	bool stall = this
+		->memory_controller
+		->l1_data_cache_access(this->data_addr,
+				       this->cpu_mod->mem_rd_data);
 }
 
 template<class CPU_mod>
 void CPU<CPU_mod>::inst_handler(void)
 {
+	bool stall = this
+		->memory_controller
+		->l1_inst_cache_access(this->inst_addr,
+				       this->cpu_mod->instruction);
 }
 
 template<class CPU_mod>
@@ -108,8 +127,13 @@ void CPU<CPU_mod>::tick(void)
 	if (this->debug_print) {
 		printf("Data addr: 0x%08x\n",
 		       this->cpu_mod->data_addr);
+		printf("Data     : 0x%08x\n",
+		       this->cpu_mod->mem_rd_data);
+
 		printf("Inst addr: 0x%08x\n",
 		       this->cpu_mod->inst_addr);
+		printf("Inst     : 0x%08x\n\n",
+		       this->cpu_mod->instruction);
 	}
 
 	// Read the outputs from the processor here
@@ -173,6 +197,7 @@ void CPU<CPU_mod>::close_trace(void)
 	if (this->trace) {
 		if (tracer) {
 			tracer->close();
+			delete tracer;
 			tracer = NULL;
 		}
 	}

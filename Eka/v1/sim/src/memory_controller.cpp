@@ -1,8 +1,8 @@
 #include <stdlib.h>
-#include "memory_handler.h"
+#include "memory_controller.h"
 
-Memory_handler::Memory_handler(unsigned int* l1_inst_cache,
-			       unsigned int* l1_data_cache)
+Memory_controller::Memory_controller(unsigned int* l1_inst_cache,
+				     unsigned int* l1_data_cache)
 {
 	this->internal_inst_cache_initialized = false;
 	this->internal_data_cache_initialized = false;
@@ -20,7 +20,7 @@ Memory_handler::Memory_handler(unsigned int* l1_inst_cache,
 	}
 }
 
-Memory_handler::~Memory_handler(void)
+Memory_controller::~Memory_controller(void)
 {
 	if (this->internal_inst_cache_initialized) {
 		delete[] this->l1_inst_cache;
@@ -33,8 +33,8 @@ Memory_handler::~Memory_handler(void)
 	}
 }
 
-bool Memory_handler::l1_inst_cache_access(unsigned int inst_addr,
-					  unsigned int& instruction)
+bool Memory_controller::l1_inst_cache_access(unsigned int inst_addr,
+					     unsigned int& instruction)
 {
 	if (this->l1_inst_cache) {
 		/* TODO : memory access check */
@@ -44,12 +44,23 @@ bool Memory_handler::l1_inst_cache_access(unsigned int inst_addr,
 	return false;
 }
 
-bool Memory_handler::l1_data_cache_access(unsigned int data_addr,
-					  unsigned int& mem_wr_data)
+bool Memory_controller::l1_data_cache_access(unsigned int data_addr,
+					     unsigned int& mem_rd_data)
 {
 	if (this->l1_data_cache) {
 		/* TODO : memory access check */
-		mem_wr_data = this->l1_data_cache[data_addr/4];
+		mem_rd_data = this->l1_data_cache[data_addr/4];
+	}
+
+	return false;
+}
+
+bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
+					     unsigned int mem_wr_data)
+{
+	if (this->l1_data_cache) {
+		/* TODO : memory access check */
+		this->l1_data_cache[data_addr/4] = mem_wr_data;
 	}
 
 	return false;

@@ -3,15 +3,18 @@
 #include "Veka_core_v1.h"
 #include "verilated.h"
 #include "cpu.h"
-#include "memory_handler.h"
+#include "memory_controller.h"
 
 int main(int argc, char **argv)
 {
-	Verilated::commandArgs(argc, argv);	
+	Verilated::commandArgs(argc, argv);
 
-	Memory_handler* memory_handler = new Memory_handler();
+	Memory_controller* memory_controller = new Memory_controller();
 
-	CPU<Veka_core_v1>* core = new CPU<Veka_core_v1>(100, true, true);
+	CPU<Veka_core_v1>* core = new CPU<Veka_core_v1>(100,
+							memory_controller,
+							true,
+							false);
 	core->open_trace("eka_core_v1_sim.vcd");
 
 	core->reset();
@@ -20,6 +23,8 @@ int main(int argc, char **argv)
 	}
 	core->close_trace();
 
+	delete memory_controller;
+	delete core;
 	return 0;
 }
 
