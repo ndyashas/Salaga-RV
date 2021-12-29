@@ -47,9 +47,15 @@ module eka_core_v1
    wire 			Reg_Wr;
 
    // Temporary wires
-   wire [31:0]			WRITE_DATA, READ_DATA1, READ_DATA2;
-   wire [4:0]			READ_ADDR1, READ_ADDR2, WRITE_ADDR;
-   
+   wire [31:0]			WRITE_DATA, read_data1, read_data2, ALU_RESULT;
+   wire [4:0]			read_addr1, read_addr2, write_addr;
+   wire				ADD_SUB_SEL, ZERO;
+
+   assign inst_addr  = {PC, 2'b0};
+   assign read_addr1 = instruction[19:15]; // rs1
+   assign read_addr2 = instruction[24:20]; // rs2
+   assign write_addr = instruction[11:7];  // rd
+
    decoder decoder_inst(.instruction(instruction),
 			.branch_stmt(branch_stmt),
 			.mem_rd(mem_rd),
@@ -60,13 +66,33 @@ module eka_core_v1
 			.Reg_Wr(Reg_Wr));
 
    register_file register_file_inst(.clk(clk),
-				    .read_addr1(READ_ADDR1),
-				    .read_addr2(READ_ADDR2),
+				    .read_addr1(read_addr1),
+				    .read_addr2(read_addr1),
 				    .write_en(Reg_Wr),
-				    .write_addr(WRITE_ADDR),
+				    .write_addr(write_addr),
 				    .write_data(WRITE_DATA),
-				    .read_data1(READ_DATA1),
-				    .read_data2(READ_DATA2));
-   
-   
+				    .read_data1(read_data1),
+				    .read_data2(read_data2));
+
+
+   alu alu_inst(.alu_src1(read_data1),
+		.alu_src2(read_data2),
+		.ALU_Op(ALU_Op),
+		.add_sub_sel(ADD_SUB_SEL),
+		.zero(ZERO),
+		.ALU_result(ALU_RESULT));
+
+
+   always @(posedge clk)
+     begin
+	if (reset)
+	  begin
+	     PC <= RESET_ADDR;
+	  end
+	else
+	  begin
+	     PC <= PC + 30'b1;
+	  end
+     end
+
 endmodule

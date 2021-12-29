@@ -1,0 +1,47 @@
+/* ALU */
+
+module alu
+  (
+   /* Inputs */
+   alu_src1,
+   alu_src2,
+   ALU_Op,
+   add_sub_sel,
+
+   /* Output */
+   zero,
+   ALU_result
+   );
+
+   // Port wires and regesters
+   input wire [31:0]       alu_src1;
+   input wire [31:0]	   alu_src2;
+   input wire [1:0]	   ALU_Op;
+   input wire		   add_sub_sel;
+
+   output reg [31:0]	   ALU_result;
+   output reg		   zero;
+
+   always @(*)
+     begin
+	zero = (alu_src1 - alu_src2 == 32'b0) ? 1'b0 : 1'b1;
+
+	case(ALU_Op)
+	  2'b00:
+	    begin
+	       if (add_sub_sel)
+		 begin
+		    ALU_result = alu_src1 - alu_src2;
+		 end
+	       else
+		 begin
+		    ALU_result = alu_src1 + alu_src2;
+		 end
+	    end // case: 2'b00
+	  default:
+	    begin
+	       ALU_result = 32'h0101_0101;
+	    end
+	endcase
+     end
+endmodule
