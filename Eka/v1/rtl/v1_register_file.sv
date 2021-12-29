@@ -34,8 +34,8 @@ module register_file
 	if (write_en)
 	  begin
 	     reg_file[write_addr] <= write_data;
-	     reg_file[0] <= 32'h0; // To overwrite any writes to the 0th location
 	  end
+	reg_file[0] <= 32'h0;                // To overwrite any writes to the 0th location
 	read_data1 <= reg_file[read_addr1];
 	read_data2 <= reg_file[read_addr2];
      end
