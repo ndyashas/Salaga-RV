@@ -10,6 +10,7 @@
 #include "verilated.h"
 #include <verilated_vcd_c.h>
 #include "memory_controller.h"
+#include "Veka_core_v1___024root.h"
 
 #ifndef __EKA_V1_CORE__
 #define __EKA_V1_CORE__
@@ -49,6 +50,7 @@ public:
 	void tick(void);
 	void open_trace(const char *vcd_file_name);
 	void close_trace(void);
+	void print_Regfile(void);
 	bool done(void);
 };
 
@@ -203,6 +205,16 @@ void CPU<CPU_mod>::close_trace(void)
 	}
 }
 
+template<class CPU_mod>
+void CPU<CPU_mod>::print_Regfile(void)
+{
+	int i;
+	printf("Register file:\n");
+	for (i = 0; i < 31; ++i) {
+		printf("r%02d: 0x%08x\n", i, this->cpu_mod->rootp->eka_core_v1__DOT__register_file_inst__DOT__reg_file[i]);
+	}
+	printf("\n");
+}
 
 template<class CPU_mod>
 bool CPU<CPU_mod>::done(void)

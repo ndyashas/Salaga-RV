@@ -38,6 +38,7 @@ int main(int argc, char **argv)
 	}
 	core->close_trace();
 
+	core->print_Regfile();
 	memory_controller->l1_inst_cache_print(32);
 	memory_controller->l1_data_cache_print(64);
 
