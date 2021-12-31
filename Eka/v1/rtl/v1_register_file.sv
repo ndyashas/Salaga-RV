@@ -26,7 +26,7 @@ module register_file
    output reg [31:0] read_data1;
    output reg [31:0] read_data2;
 
-   // Local wires
+   // Local
    reg [31:0] 	      reg_file [0:31];
 
    always @(posedge clk)
@@ -36,8 +36,12 @@ module register_file
 	     reg_file[write_addr] <= write_data;
 	  end
 	reg_file[0] <= 32'h0;                // To overwrite any writes to the 0th location
-	read_data1 <= reg_file[read_addr1];
-	read_data2 <= reg_file[read_addr2];
+     end
+
+   always @(*)
+     begin
+	read_data1 = reg_file[read_addr1];
+	read_data2 = reg_file[read_addr2];
      end
 
 endmodule
