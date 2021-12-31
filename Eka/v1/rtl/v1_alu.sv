@@ -5,7 +5,7 @@ module alu
    /* Inputs */
    alu_src1,
    alu_src2,
-   ALU_Op,
+   ALU_Ctrl,
    add_sub_sel,
 
    /* Output */
@@ -16,7 +16,7 @@ module alu
    // Port wires and regesters
    input wire [31:0]       alu_src1;
    input wire [31:0]	   alu_src2;
-   input wire [1:0]	   ALU_Op;
+   input wire [3:0]	   ALU_Ctrl;
    input wire		   add_sub_sel;
 
    output reg [31:0]	   ALU_result;
@@ -24,23 +24,21 @@ module alu
 
    always @(*)
      begin
-	zero = (alu_src1 - alu_src2 == 32'b0) ? 1'b0 : 1'b1;
+	zero = (alu_src1 - alu_src2 == 32'b0) ? 1'b1 : 1'b0;
 
-	case(ALU_Op)
-	  2'b00:
+	case(ALU_Ctrl)
+	  4'b0000:
 	    begin
-	       if (add_sub_sel)
-		 begin
-		    ALU_result = alu_src1 - alu_src2;
-		 end
-	       else
-		 begin
-		    ALU_result = alu_src1 + alu_src2;
-		 end
-	    end // case: 2'b00
+	       ALU_result = alu_src1 + alu_src2;
+	    end
+	  4'b1000:
+	    begin
+	       ALU_result = alu_src1 - alu_src2;
+	    end
+
 	  default:
 	    begin
-	       ALU_result = 32'h0101_0101;
+	       ALU_result = 32'bx;
 	    end
 	endcase
      end

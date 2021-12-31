@@ -42,45 +42,52 @@ module eka_core_v1
    reg [ADDR_WIDTH-1-2:0] 	PC; // The lower two bits are always 0.
    wire 			branch_stmt;
    wire 			mem_to_reg;
-   wire [1:0] 			ALU_Op;
+   wire [3:0] 			ALU_Ctrl;
    wire 			ALU_Src;
    wire 			Reg_Wr;
 
-   // Temporary wires
-   wire [31:0]			WRITE_DATA, read_data1, read_data2, ALU_RESULT;
+   wire [31:0]			write_data, read_data1, read_data2, ALU_result;
+   wire [31:0]			alu_leg2, immediate;
    wire [4:0]			read_addr1, read_addr2, write_addr;
    wire				ADD_SUB_SEL, ZERO;
 
    assign inst_addr  = {PC, 2'b0};
-   assign read_addr1 = instruction[19:15]; // rs1
-   assign read_addr2 = instruction[24:20]; // rs2
-   assign write_addr = instruction[11:7];  // rd
+
+
+   assign read_addr2 = instruction[24:20];
+   assign read_addr1 = instruction[19:15];
+   assign write_addr = instruction[11:7];
 
    decoder decoder_inst(.instruction(instruction),
+			.immediate(immediate),
 			.branch_stmt(branch_stmt),
 			.mem_rd(mem_rd),
 			.mem_wr(mem_wr),
 			.mem_to_reg(mem_to_reg),
-			.ALU_Op(ALU_Op),
+			.ALU_Ctrl(ALU_Ctrl),
 			.ALU_Src(ALU_Src),
 			.Reg_Wr(Reg_Wr));
 
+   assign write_data = (mem_to_reg == 1'b1) ? mem_rd_data : ALU_result;
+
    register_file register_file_inst(.clk(clk),
 				    .read_addr1(read_addr1),
-				    .read_addr2(read_addr1),
+				    .read_addr2(read_addr2),
 				    .write_en(Reg_Wr),
 				    .write_addr(write_addr),
-				    .write_data(WRITE_DATA),
+				    .write_data(write_data),
 				    .read_data1(read_data1),
 				    .read_data2(read_data2));
 
 
+   assign alu_leg2 = (ALU_Src) ? immediate : read_data2;
+
    alu alu_inst(.alu_src1(read_data1),
-		.alu_src2(read_data2),
-		.ALU_Op(ALU_Op),
+		.alu_src2(alu_leg2),
+		.ALU_Ctrl(ALU_Ctrl),
 		.add_sub_sel(ADD_SUB_SEL),
 		.zero(ZERO),
-		.ALU_result(ALU_RESULT));
+		.ALU_result(ALU_result));
 
 
    always @(posedge clk)
