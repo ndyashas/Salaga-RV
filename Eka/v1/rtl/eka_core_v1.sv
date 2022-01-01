@@ -80,6 +80,7 @@ module eka_core_v1
 				    .read_data2(read_data2));
 
 
+   assign mem_wr_data = read_data2;
    assign alu_leg2 = (ALU_Src) ? immediate : read_data2;
 
    alu alu_inst(.alu_src1(read_data1),

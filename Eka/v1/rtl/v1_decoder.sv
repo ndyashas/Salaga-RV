@@ -73,6 +73,17 @@ module decoder
 	       Reg_Wr      = 1'b1;
 	       immediate   = {{20{instruction[31]}}, instruction[31:20]};
 	    end // case: I_TYPE
+	  S_TYPE:
+	    begin
+	       branch_stmt = 1'b0;
+	       mem_rd      = 1'b0;
+	       mem_wr      = 1'b1;
+	       mem_to_reg  = 1'bx;
+	       ALU_Op      = 2'b00;
+	       ALU_Src     = 1'b1;
+	       Reg_Wr      = 1'b0;
+	       immediate   = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
+	    end
 	  default:
 	    begin
 	       branch_stmt = 1'b0;
