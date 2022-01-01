@@ -57,6 +57,7 @@ module eka_core_v1
    assign read_addr2 = instruction[24:20];
    assign read_addr1 = instruction[19:15];
    assign write_addr = instruction[11:7];
+   assign data_addr = ALU_result;
 
    decoder decoder_inst(.instruction(instruction),
 			.immediate(immediate),
