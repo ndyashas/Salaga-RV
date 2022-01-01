@@ -60,7 +60,7 @@ bool Memory_controller::l1_data_cache_access(unsigned int data_addr,
 {
 	if (this->l1_data_cache) {
 		/* TODO : memory access check */
-		mem_rd_data = this->l1_data_cache[data_addr/4];
+		mem_rd_data = this->l1_data_cache[data_addr];
 	}
 
 	return false;
@@ -71,7 +71,7 @@ bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
 {
 	if (this->l1_data_cache) {
 		/* TODO : memory access check */
-		this->l1_data_cache[data_addr/4] = mem_wr_data;
+		this->l1_data_cache[data_addr] = mem_wr_data;
 	}
 
 	return false;
