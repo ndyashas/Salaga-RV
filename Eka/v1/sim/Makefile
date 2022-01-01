@@ -4,7 +4,7 @@ VERILATOR_ROOT ?= $(shell bash -c 'verilator -V|grep VERILATOR_ROOT | head -1 | 
 
 include_paths := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
 vinclude_src  := $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
-vflags        := -cc --trace
+vflags        := -cc --trace -Wall -Wno-UNUSED -Wno-UNDRIVEN --top-module $(core_name)
 cpp_src       := $(wildcard src/*.cpp)
 cpp_headers   := $(wildcard include/*.h)
 
