@@ -164,6 +164,7 @@ void CPU<CPU_mod>::tick(void)
 
 	// Uses 'inst_addr' and populates 'this->cpu_mod->instruction'
 	this->inst_handler();
+	this->cpu_mod->eval();
 
 	if (this->trace && this->tracer) tracer->dump(10*this->tick_count);
 
