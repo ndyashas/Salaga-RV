@@ -139,9 +139,7 @@ void CPU<CPU_mod>::tick(void)
 	}
 
 	// Read the outputs from the processor here
-	this->mem_rd = this->cpu_mod->mem_rd;
 	this->mem_wr = this->cpu_mod->mem_wr;
-	this->inst_addr = this->cpu_mod->inst_addr;
 	this->data_addr = this->cpu_mod->data_addr;
 	this->mem_wr_data = this->cpu_mod->mem_wr_data;
 
@@ -157,14 +155,18 @@ void CPU<CPU_mod>::tick(void)
 		this->mem_wr_handler();
 	}
 
+	// Uses 'inst_addr' and populates 'this->cpu_mod->instruction'
+	this->inst_addr = this->cpu_mod->inst_addr;
+	this->inst_handler();
+	this->cpu_mod->eval();
+
+	this->mem_rd = this->cpu_mod->mem_rd;
+	this->data_addr = this->cpu_mod->data_addr;
 	if (this->mem_rd) {
 		// Populates 'this->cpu_mod->mem_rd_data'
 		this->mem_rd_handler();
 	}
 
-	// Uses 'inst_addr' and populates 'this->cpu_mod->instruction'
-	this->inst_handler();
-	this->cpu_mod->eval();
 
 	if (this->trace && this->tracer) tracer->dump(10*this->tick_count);
 
