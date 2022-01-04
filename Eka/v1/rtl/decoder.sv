@@ -73,6 +73,17 @@ module decoder
 	       Reg_Wr      = 1'b1;
 	       immediate   = {{20{instruction[31]}}, instruction[31:20]};
 	    end // case: I_TYPE
+	  I_LOAD:
+	    begin
+	       branch_stmt = 1'b0;
+	       mem_rd      = 1'b1;
+	       mem_wr      = 1'b0;
+	       mem_to_reg  = 1'b1;
+	       ALU_Op      = 2'b00;
+	       ALU_Src     = 1'b1;
+	       Reg_Wr      = 1'b1;
+	       immediate   = {{20{instruction[31]}}, instruction[31:20]};
+	    end // case: I_LOAD
 	  S_TYPE:
 	    begin
 	       branch_stmt = 1'b0;
@@ -83,7 +94,7 @@ module decoder
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b0;
 	       immediate   = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
-	    end
+	    end // case: S_TYPE
 	  default:
 	    begin
 	       branch_stmt = 1'b0;
@@ -94,7 +105,7 @@ module decoder
 	       ALU_Src     = 1'bx;
 	       Reg_Wr      = 1'b0;
 	       immediate   = 32'bx;
-	    end
+	    end // case: default
 	endcase // case (opcode)
 
 	case(ALU_Op)
