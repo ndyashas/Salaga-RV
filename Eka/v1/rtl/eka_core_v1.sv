@@ -48,8 +48,9 @@ module eka_core_v1
 
    wire [31:0]			write_data, read_data1, read_data2, ALU_result;
    wire [31:0]			alu_leg2, immediate;
+   wire [31-2:0]		PC_OTHER_IP;
    wire [4:0]			read_addr1, read_addr2, write_addr;
-   wire				ADD_SUB_SEL, ZERO;
+   wire				ADD_SUB_SEL, ZERO, PC_OTHER_IP_SEL;
 
    assign inst_addr  = {PC, 2'b0};
 
@@ -92,16 +93,14 @@ module eka_core_v1
 		.ALU_result(ALU_result));
 
 
-   always @(posedge clk)
-     begin
-	if (reset)
-	  begin
-	     PC <= RESET_ADDR;
-	  end
-	else
-	  begin
-	     PC <= PC + 30'b1;
-	  end
-     end
+
+   pc_logic
+     #(.ADDR_WIDTH(ADDR_WIDTH),
+       .RESET_ADDR(RESET_ADDR))
+   pc_logic_inst(.clk(clk),
+		 .reset(reset),
+		 .pc_other_ip(PC_OTHER_IP),
+		 .pc_other_ip_sel(PC_OTHER_IP_SEL),
+		 .PC(PC));
 
 endmodule
