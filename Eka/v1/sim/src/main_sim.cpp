@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	l1_inst_cache[1]  = 0b00000000010100000000000010010011; // ADDI rd(1) rs1(0) 5
 	l1_inst_cache[2]  = 0b00000000011100000000000100010011; // ADDI rd(2) rs1(0) 7
 	l1_inst_cache[3]  = 0b00000000001000001000000110110011; // ADD rd(3) rs1(1) rs1(2)
-	l1_inst_cache[4]  = 0b00000000001100000010010100100011; // SW rs1(3) rs2(0) 10
+	l1_inst_cache[4]  = 0b00000000001100000010011000100011; // SW rs1(3) rs2(0) 12
 
 	unsigned int* l1_data_cache = new unsigned int[4096];
 

@@ -60,7 +60,7 @@ bool Memory_controller::l1_data_cache_access(unsigned int data_addr,
 {
 	if (this->l1_data_cache) {
 		/* TODO : memory access check */
-		mem_rd_data = this->l1_data_cache[data_addr];
+		mem_rd_data = this->l1_data_cache[data_addr/4];
 	}
 
 	return false;
@@ -71,7 +71,7 @@ bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
 {
 	if (this->l1_data_cache) {
 		/* TODO : memory access check */
-		this->l1_data_cache[data_addr] = mem_wr_data;
+		this->l1_data_cache[data_addr/4] = mem_wr_data;
 	}
 
 	return false;
@@ -90,12 +90,12 @@ void Memory_controller::l1_inst_cache_print(unsigned long int size)
 	        printf("Instruction memory:\n");
 		for (i = 0; i < size_by_four; ++i) {
 			word = this->l1_inst_cache[i];
-			printf("Word %05d: %02x %02x %02x %02x\n",
-			       i,
+			printf("%02x %02x %02x %02x - Byte %05d\n",
 			       (word & 0xff000000) >> 24,
 			       (word & 0x00ff0000) >> 16,
 			       (word & 0x0000ff00) >> 8,
-			       (word & 0x000000ff));
+			       (word & 0x000000ff),
+			       i*4);
 		}
 	        printf("\n");
 	}
@@ -114,12 +114,12 @@ void Memory_controller::l1_data_cache_print(unsigned long int size)
 	        printf("Data memory:\n");
 		for (i = 0; i < size_by_four; ++i) {
 			word = this->l1_data_cache[i];
-			printf("Word %05d: %02x %02x %02x %02x\n",
-			       i,
+			printf("%02x %02x %02x %02x - Byte %05d\n",
 			       (word & 0xff000000) >> 24,
 			       (word & 0x00ff0000) >> 16,
 			       (word & 0x0000ff00) >> 8,
-			       (word & 0x000000ff));
+			       (word & 0x000000ff),
+			       i*4);
 		}
 	        printf("\n");
 	}
