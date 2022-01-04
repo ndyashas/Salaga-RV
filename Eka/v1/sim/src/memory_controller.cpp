@@ -3,31 +3,31 @@
 #include "memory_controller.h"
 
 Memory_controller::Memory_controller(unsigned int* l1_inst_cache,
-				     unsigned long int l1_inst_cache_size,
+				     unsigned long int l1_inst_cache_size_in_words,
 				     unsigned int* l1_data_cache,
-				     unsigned long int l1_data_cache_size)
+				     unsigned long int l1_data_cache_size_in_words)
 {
 	this->internal_inst_cache_initialized = false;
 	this->internal_data_cache_initialized = false;
 
 	if (l1_inst_cache) {
 		this->l1_inst_cache = l1_inst_cache;
-		this->l1_inst_cache_size = l1_inst_cache_size;
+		this->l1_inst_cache_size_in_words = l1_inst_cache_size_in_words;
 	}
 	else {
 		this->internal_inst_cache_initialized = true;
 		this->l1_inst_cache = new unsigned int[1024]{15};
-		this->l1_inst_cache_size = 1024/4;
+		this->l1_inst_cache_size_in_words = 1024/4;
 	}
 
 	if (l1_data_cache) {
 		this->l1_data_cache = l1_data_cache;
-		this->l1_data_cache_size = l1_data_cache_size;
+		this->l1_data_cache_size_in_words = l1_data_cache_size_in_words;
 	}
 	else {
 		this->internal_data_cache_initialized = true;
 		this->l1_data_cache = new unsigned int[4096]{3};
-		this->l1_data_cache_size = 4096/4;
+		this->l1_data_cache_size_in_words = 4096/4;
 	}
 }
 
@@ -77,18 +77,16 @@ bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
 	return false;
 }
 
-void Memory_controller::l1_inst_cache_print(unsigned long int size)
+void Memory_controller::l1_inst_cache_print(unsigned long int size_in_words)
 {
 	int i;
 	unsigned int word;
-	unsigned int size_by_four;
 	if (this->l1_inst_cache) {
-		if (size >= this->l1_inst_cache_size)
-			size = this->l1_inst_cache_size;
+		if (size_in_words >= this->l1_inst_cache_size_in_words)
+			size_in_words = this->l1_inst_cache_size_in_words;
 
-		size_by_four = size / 4;
 	        printf("Instruction memory:\n");
-		for (i = 0; i < size_by_four; ++i) {
+		for (i = 0; i < size_in_words; ++i) {
 			word = this->l1_inst_cache[i];
 			printf("%02x %02x %02x %02x - Byte %05d\n",
 			       (word & 0xff000000) >> 24,
@@ -101,18 +99,16 @@ void Memory_controller::l1_inst_cache_print(unsigned long int size)
 	}
 }
 
-void Memory_controller::l1_data_cache_print(unsigned long int size)
+void Memory_controller::l1_data_cache_print(unsigned long int size_in_words)
 {
 	int i;
 	unsigned int word;
-	unsigned int size_by_four;
 	if (this->l1_data_cache) {
-		if (size >= this->l1_data_cache_size)
-			size = this->l1_data_cache_size;
+		if (size_in_words >= this->l1_data_cache_size_in_words)
+			size_in_words = this->l1_data_cache_size_in_words;
 
-		size_by_four = size / 4;
 	        printf("Data memory:\n");
-		for (i = 0; i < size_by_four; ++i) {
+		for (i = 0; i < size_in_words; ++i) {
 			word = this->l1_data_cache[i];
 			printf("%02x %02x %02x %02x - Byte %05d\n",
 			       (word & 0xff000000) >> 24,
