@@ -1,0 +1,43 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Wed Jan  5 02:03:31 2022
+[*]
+[dumpfile] "eka_core_v1_sim.vcd"
+[dumpfile_mtime] "Wed Jan  5 02:02:35 2022"
+[dumpfile_size] 18959
+[savefile] "gtk/config.gtkw"
+[timestart] 9
+[size] 1864 1016
+[pos] -51 -51
+*-5.141781 122 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.eka_core_v1.
+[sst_width] 233
+[signals_width] 278
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@28
+TOP.clk
+TOP.reset
+@22
+TOP.inst_addr[31:0]
+@4022
+[color] 2
+^>1 ./gtk/filters/rv32i-filter.py
+TOP.instruction[31:0]
+@420
+TOP.data_addr[31:0]
+@28
+[color] 3
+TOP.eka_core_v1.decoder_inst.mem_rd
+@22
+[color] 3
+TOP.mem_rd_data[31:0]
+@28
+[color] 3
+TOP.mem_wr
+@22
+[color] 3
+TOP.mem_wr_data[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
