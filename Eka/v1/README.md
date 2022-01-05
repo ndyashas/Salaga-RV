@@ -34,11 +34,11 @@
 - [ ] SLL
 - [ ] SLT
 - [ ] SLTU
-- [ ] XOR
+- [x] XOR
 - [ ] SRL
 - [ ] SRA
-- [ ] OR
-- [ ] AND
+- [x] OR
+- [x] AND
 - [ ] FENCE
 - [ ] ECALL
 - [ ] EBREAK

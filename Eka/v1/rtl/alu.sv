@@ -35,6 +35,18 @@ module alu
 	    begin
 	       ALU_result = alu_src1 - alu_src2;
 	    end
+	  4'b0110:
+	    begin
+	       ALU_result = alu_src1 | alu_src2;
+	    end
+	  4'b0111:
+	    begin
+	       ALU_result = alu_src1 & alu_src2;
+	    end
+	  4'b0100:
+	    begin
+	       ALU_result = alu_src1 ^ alu_src2;
+	    end
 
 	  default:
 	    begin
