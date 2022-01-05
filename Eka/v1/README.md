@@ -1,0 +1,44 @@
+# Eka v1
+
+## Currently supported instructions
+ 
+- [ ] LUI
+- [ ] AUIPC
+- [ ] JAL
+- [ ] JALR
+- [ ] BEQ
+- [ ] BNE
+- [ ] BLT
+- [ ] BGE
+- [ ] BLTU
+- [ ] BGEU
+- [ ] LB
+- [ ] LH
+- [x] LW
+- [ ] LBU
+- [ ] LHU
+- [ ] SB
+- [ ] SH
+- [x] SW
+- [x] ADDI
+- [ ] SLTI
+- [ ] SLTIU
+- [ ] XORI
+- [ ] ORI
+- [ ] ANDI
+- [ ] SLLI
+- [ ] SRLI
+- [ ] SRAI
+- [x] ADD
+- [x] SUB
+- [ ] SLL
+- [ ] SLT
+- [ ] SLTU
+- [ ] XOR
+- [ ] SRL
+- [ ] SRA
+- [ ] OR
+- [ ] AND
+- [ ] FENCE
+- [ ] ECALL
+- [ ] EBREAK
