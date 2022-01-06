@@ -1,5 +1,10 @@
 # Eka v1
 
+*Eka* core is a Single-Cycle-CPU. Of course, this core is not practical for implementation. However, it is a great way of familiarizing oneself with the instruction set and basic architecture for a 5 stage CPU.
+
+The core interface is as shown below
+<img alt="Arch-image" src="/images/Eka/core-interface.png">
+
 ## Currently supported instructions
  
 - [ ] LUI
