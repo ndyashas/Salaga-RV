@@ -98,6 +98,7 @@ void CPU<CPU_mod>::mem_wr_handler(void)
 		->memory_controller
 		->l1_data_cache_update(this->data_addr,
 				       this->mem_wr_data);
+	this->cpu_mod->data_stall = stall;
 }
 
 template<class CPU_mod>
@@ -107,6 +108,7 @@ void CPU<CPU_mod>::mem_rd_handler(void)
 		->memory_controller
 		->l1_data_cache_access(this->data_addr,
 				       this->cpu_mod->mem_rd_data);
+	this->cpu_mod->data_stall = stall;
 }
 
 template<class CPU_mod>
@@ -116,6 +118,7 @@ void CPU<CPU_mod>::inst_handler(void)
 		->memory_controller
 		->l1_inst_cache_access(this->inst_addr,
 				       this->cpu_mod->instruction);
+	this->cpu_mod->inst_valid = !stall;
 }
 
 template<class CPU_mod>

@@ -15,6 +15,8 @@ module eka_core_v1
     reset,
     instruction,
     mem_rd_data,
+    inst_valid,
+    data_stall,
 
     /* Outputs */
     inst_addr,
@@ -30,6 +32,8 @@ module eka_core_v1
    input wire 			reset;         // Reset processor.
    input wire [31:0] 		instruction;   // Fetched instruction from the memory.
    input wire [31:0] 		mem_rd_data;   // Read data coming from the memory.
+   input wire			inst_valid;    // Instruction valid. Can be used as !inst_stall
+   input wire			data_stall;    // Data stall.
 
    output wire [ADDR_WIDTH-1:0] inst_addr;     // Address of the instruction to be read/written.
    output wire [31:0] 		data_addr;     // Address of the data to be read/written.
@@ -53,6 +57,7 @@ module eka_core_v1
    wire [2:0]			funct3;
 
    reg				branch_success;
+   reg				stall;
 
    assign inst_addr  = {PC, 2'b0};
 
@@ -94,7 +99,13 @@ module eka_core_v1
 		.zero(zero),
 		.ALU_result(ALU_result));
 
+   // Stall logic
+   always @(*)
+     begin
+	stall = (!inst_valid) | data_stall;
+     end
 
+   // Calculation of pc_next
    always @(*)
      begin
 	if (branch_stmt)
@@ -131,7 +142,10 @@ module eka_core_v1
 	  end
 	else
 	  begin
-	     PC <= pc_next;
+	     if (!stall)
+	       begin
+		  PC <= pc_next;
+	       end
 	  end
      end
 
