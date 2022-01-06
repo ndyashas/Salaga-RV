@@ -6,7 +6,6 @@ module alu
    alu_src1,
    alu_src2,
    ALU_Ctrl,
-   add_sub_sel,
 
    /* Output */
    zero,
@@ -17,7 +16,6 @@ module alu
    input wire [31:0]       alu_src1;
    input wire [31:0]	   alu_src2;
    input wire [3:0]	   ALU_Ctrl;
-   input wire		   add_sub_sel;
 
    output reg [31:0]	   ALU_result;
    output reg		   zero;

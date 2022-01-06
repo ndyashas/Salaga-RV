@@ -39,7 +39,7 @@ module eka_core_v1
    
    
    // Local wires and regesters
-   reg [ADDR_WIDTH-1-2:0] 	PC; // The lower two bits are always 0.
+   reg [ADDR_WIDTH-1-2:0] 	PC, pc_next; // The lower two bits are always 0.
    wire 			branch_stmt;
    wire 			mem_to_reg;
    wire [3:0] 			ALU_Ctrl;
@@ -48,9 +48,11 @@ module eka_core_v1
 
    wire [31:0]			write_data, read_data1, read_data2, ALU_result;
    wire [31:0]			alu_leg2, immediate;
-   wire [31-2:0]		PC_OTHER_IP;
    wire [4:0]			read_addr1, read_addr2, write_addr;
-   wire				ADD_SUB_SEL, ZERO, PC_OTHER_IP_SEL;
+   wire				zero;
+   wire [2:0]			funct3;
+
+   reg				branch_success;
 
    assign inst_addr  = {PC, 2'b0};
 
@@ -58,7 +60,8 @@ module eka_core_v1
    assign read_addr2 = instruction[24:20];
    assign read_addr1 = instruction[19:15];
    assign write_addr = instruction[11:7];
-   assign data_addr = ALU_result;
+   assign data_addr  = ALU_result;
+   assign funct3     = instruction[14:12];
 
    decoder decoder_inst(.instruction(instruction),
 			.immediate(immediate),
@@ -88,19 +91,48 @@ module eka_core_v1
    alu alu_inst(.alu_src1(read_data1),
 		.alu_src2(alu_leg2),
 		.ALU_Ctrl(ALU_Ctrl),
-		.add_sub_sel(ADD_SUB_SEL),
-		.zero(ZERO),
+		.zero(zero),
 		.ALU_result(ALU_result));
 
 
+   always @(*)
+     begin
+	if (branch_stmt)
+	  begin
+	     case(funct3)
+	       3'b000: // BEQ
+		 begin
+		    branch_success = (zero == 1'b1) ? 1'b1 : 1'b0;
+		 end
+	       3'b001:
+		 begin
+		    branch_success = (zero != 1'b1) ? 1'b1 : 1'b0;
+		 end
+	       default:
+		 begin
+		    branch_success = 1'b0;
+		 end
+	     endcase
+	  end // if (branch_stmt)
+	else
+	  begin
+	     branch_success = 1'b0;
+	  end // else: !if(branch_stmt)
+	// immediate holds the number of bytes offset. We ignore the lower
+	// 2 bits as our core only supports 32-bit instructions.
+	pc_next = (branch_success == 1'b1) ? PC + immediate[31:2] : PC + 30'b1; // Ignore compressed instructions
+     end
 
-   pc_logic
-     #(.ADDR_WIDTH(ADDR_WIDTH),
-       .RESET_ADDR(RESET_ADDR))
-   pc_logic_inst(.clk(clk),
-		 .reset(reset),
-		 .pc_other_ip(PC_OTHER_IP),
-		 .pc_other_ip_sel(PC_OTHER_IP_SEL),
-		 .PC(PC));
+   always @(posedge clk)
+     begin
+	if (reset)
+	  begin
+	     PC <= RESET_ADDR;
+	  end
+	else
+	  begin
+	     PC <= pc_next;
+	  end
+     end
 
 endmodule

@@ -48,8 +48,14 @@ bool Memory_controller::l1_inst_cache_access(unsigned int inst_addr,
 					     unsigned int& instruction)
 {
 	if (this->l1_inst_cache) {
-		/* TODO : memory access check */
-		instruction = this->l1_inst_cache[inst_addr/4];
+		if (inst_addr/4 < this->l1_inst_cache_size_in_words) {
+			instruction = this->l1_inst_cache[inst_addr/4];
+		}
+		else {
+		        printf("Instruction address out of bound:\n");
+			printf("Instruction requested : 0x%08x\n", inst_addr * 4);
+		        printf("Memory size           : 0x%08lx\n", this->l1_inst_cache_size_in_words * 4);
+		}
 	}
 
 	return false;
@@ -59,8 +65,14 @@ bool Memory_controller::l1_data_cache_access(unsigned int data_addr,
 					     unsigned int& mem_rd_data)
 {
 	if (this->l1_data_cache) {
-		/* TODO : memory access check */
-		mem_rd_data = this->l1_data_cache[data_addr/4];
+		if (data_addr/4 < this->l1_data_cache_size_in_words) {
+		        mem_rd_data = this->l1_data_cache[data_addr/4];
+		}
+		else {
+		        printf("Data address out of bound:\n");
+			printf("Data requested : 0x%08x\n", data_addr * 4);
+		        printf("Memory size    : 0x%08lx\n", this->l1_data_cache_size_in_words * 4);
+		}
 	}
 
 	return false;

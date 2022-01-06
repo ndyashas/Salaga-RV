@@ -17,12 +17,12 @@ int main(int argc, char **argv)
 	l1_inst_cache[3]  = 0b01000000001000001000000110110011; // SUB rd(3) rs1(1) rs1(2)
 	l1_inst_cache[4]  = 0b00000000001100000010011000100011; // SW rs1(3) rs2(0) 12
 
-	l1_inst_cache[5]  = 0b00000000000000000000000000000000;
+	l1_inst_cache[5]  = 0b00000000000000001001101001100011; // BNE rs1(1) rs2(0) 20 // 5*4 = 20 bytes. Jump to Cache[10] inst
 	l1_inst_cache[6]  = 0b00000001100000000010001010000011; // LW rd(5) rs1(0) 24  // holds 3
 	l1_inst_cache[7]  = 0b00000000110000000010001100000011; // LW rd(6) rs1(0) 12  // holds -2
 	l1_inst_cache[8]  = 0b00000000011000101000001110110011; // ADD rd(7) rs1(5) rs1(6)
 	l1_inst_cache[9]  = 0b00000010011100000010000000100011; // SW rs1(7) rs2(0) 32 // expect 1
-
+	l1_inst_cache[10] = 0b00000000000000000000000000000000;
 
 	unsigned int* l1_data_cache = new unsigned int[4096];
 
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	core->close_trace();
 
 	core->print_Regfile();
-	memory_controller->l1_inst_cache_print(10);
+	memory_controller->l1_inst_cache_print(16);
 	memory_controller->l1_data_cache_print(16);
 
 	delete memory_controller;

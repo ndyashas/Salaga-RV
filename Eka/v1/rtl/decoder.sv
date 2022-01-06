@@ -95,6 +95,22 @@ module decoder
 	       Reg_Wr      = 1'b0;
 	       immediate   = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
 	    end // case: S_TYPE
+	  B_TYPE:
+	    begin
+	       branch_stmt = 1'b1;
+	       mem_rd      = 1'b0;
+	       mem_wr      = 1'b0;
+	       mem_to_reg  = 1'bx;
+	       ALU_Op      = 2'b01;
+	       ALU_Src     = 1'b0;
+	       Reg_Wr      = 1'b0;
+	       // Immediate is a 32-bit quantity specifying the number of
+	       // bytes to add to the PC. immediate will always be aligned
+	       // to 16bit words. This is in the ISA to support 'C' instr set
+	       // this is not supported in our core.
+	       immediate   = {{20{instruction[31]}}, instruction[7], instruction[30:25], instruction[11:8], 1'b0};
+	    end // case: B_TYPE
+
 	  default:
 	    begin
 	       branch_stmt = 1'b0;

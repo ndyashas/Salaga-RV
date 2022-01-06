@@ -6,8 +6,8 @@
 - [ ] AUIPC
 - [ ] JAL
 - [ ] JALR
-- [ ] BEQ
-- [ ] BNE
+- [x] BEQ
+- [x] BNE
 - [ ] BLT
 - [ ] BGE
 - [ ] BLTU
