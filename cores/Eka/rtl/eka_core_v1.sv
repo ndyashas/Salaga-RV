@@ -52,8 +52,9 @@ module eka_core_v1
 
    wire [31:0]			write_data, read_data1, read_data2, ALU_result;
    wire [31:0]			alu_leg2, immediate;
-   wire [4:0]			read_addr1, read_addr2, write_addr;
+   wire [4:0]			read_addr1, read_addr2, write_addr, reg_file_read_addr1;
    wire				zero;
+   wire				r1_zero;
    wire [2:0]			funct3;
 
    reg				branch_success;
@@ -74,14 +75,16 @@ module eka_core_v1
 			.mem_rd(mem_rd),
 			.mem_wr(mem_wr),
 			.mem_to_reg(mem_to_reg),
+			.r1_zero(r1_zero),
 			.ALU_Ctrl(ALU_Ctrl),
 			.ALU_Src(ALU_Src),
 			.Reg_Wr(Reg_Wr));
 
    assign write_data = (mem_to_reg == 1'b1) ? mem_rd_data : ALU_result;
+   assign reg_file_read_addr1 = (r1_zero == 1'b1) ? 5'b0 : read_addr1;
 
    register_file register_file_inst(.clk(clk),
-				    .read_addr1(read_addr1),
+				    .read_addr1(reg_file_read_addr1),
 				    .read_addr2(read_addr2),
 				    .write_en(Reg_Wr),
 				    .write_addr(write_addr),

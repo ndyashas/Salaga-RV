@@ -15,6 +15,7 @@ module decoder
    mem_rd,
    mem_wr,
    mem_to_reg,
+   r1_zero,
    ALU_Ctrl,
    ALU_Src,
    Reg_Wr
@@ -27,6 +28,7 @@ module decoder
    output reg	     mem_rd;
    output reg	     mem_wr;
    output reg	     mem_to_reg;
+   output reg	     r1_zero;
    output reg [3:0]  ALU_Ctrl;
    output reg	     ALU_Src;
    output reg	     Reg_Wr;
@@ -40,6 +42,8 @@ module decoder
    localparam	     U_AUIPC = 7'b0010111;
    localparam	     U_LUI   = 7'b0110111;
    localparam	     J_JAL   = 7'b1101111;
+   localparam	     J_JALR  = 7'b1100111;
+
 
    wire [6:0]	     opcode;
    wire [2:0]	     funct3;
@@ -57,6 +61,7 @@ module decoder
 	       mem_rd      = 1'b0;
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b0;
+	       r1_zero     = 1'b0;
 	       ALU_Op      = 2'b10;
 	       ALU_Src     = 1'b0;
 	       Reg_Wr      = 1'b1;
@@ -68,6 +73,7 @@ module decoder
 	       mem_rd      = 1'b0;
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b0;
+	       r1_zero     = 1'b0;
 	       ALU_Op      = 2'b10;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -79,6 +85,7 @@ module decoder
 	       mem_rd      = 1'b1;
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b1;
+	       r1_zero     = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -90,6 +97,7 @@ module decoder
 	       mem_rd      = 1'b0;
 	       mem_wr      = 1'b1;
 	       mem_to_reg  = 1'bx;
+	       r1_zero     = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b0;
@@ -101,6 +109,7 @@ module decoder
 	       mem_rd      = 1'b0;
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'bx;
+	       r1_zero     = 1'b0;
 	       ALU_Op      = 2'b01;
 	       ALU_Src     = 1'b0;
 	       Reg_Wr      = 1'b0;
@@ -110,6 +119,18 @@ module decoder
 	       // this is not supported in our core.
 	       immediate   = {{20{instruction[31]}}, instruction[7], instruction[30:25], instruction[11:8], 1'b0};
 	    end // case: B_TYPE
+	  U_LUI:
+	    begin
+	       branch_stmt = 1'b0;
+	       mem_rd      = 1'b0;
+	       mem_wr      = 1'b0;
+	       mem_to_reg  = 1'b0;
+	       r1_zero     = 1'b1;
+	       ALU_Op      = 2'b00;
+	       ALU_Src     = 1'b1;
+	       Reg_Wr      = 1'b1;
+	       immediate   = {instruction[31:12], 12'b0};
+	    end
 
 	  default:
 	    begin
@@ -117,6 +138,7 @@ module decoder
 	       mem_rd      = 1'b0;
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'bx;
+	       r1_zero     = 1'bx;
 	       ALU_Op      = 2'bx;
 	       ALU_Src     = 1'bx;
 	       Reg_Wr      = 1'b0;
