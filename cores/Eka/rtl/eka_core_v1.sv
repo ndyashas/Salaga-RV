@@ -43,7 +43,9 @@ module eka_core_v1
    
    
    // Local wires and regesters
-   reg [ADDR_WIDTH-1-2:0] 	PC, pc_next; // The lower two bits are always 0.
+   wire [ADDR_WIDTH-1-2:0]	PC; // The lower two bits are always 0.
+   wire [ADDR_WIDTH-1-2:0]	pc_next;
+   wire [ADDR_WIDTH-1-2:0]	pc_plus_four;
    wire 			branch_stmt;
    wire 			mem_to_reg;
    wire [3:0] 			ALU_Ctrl;
@@ -56,9 +58,7 @@ module eka_core_v1
    wire				zero;
    wire				r1_zero;
    wire [2:0]			funct3;
-
-   reg				branch_success;
-   reg				stall;
+   wire				stall;
 
    assign inst_addr  = {PC, 2'b0};
 
@@ -102,54 +102,24 @@ module eka_core_v1
 		.zero(zero),
 		.ALU_result(ALU_result));
 
-   // Stall logic
-   always @(*)
-     begin
-	stall = (!inst_valid) | data_stall;
-     end
 
-   // Calculation of pc_next
-   always @(*)
-     begin
-	if (branch_stmt)
-	  begin
-	     case(funct3)
-	       3'b000: // BEQ
-		 begin
-		    branch_success = (zero == 1'b1) ? 1'b1 : 1'b0;
-		 end
-	       3'b001:
-		 begin
-		    branch_success = (zero != 1'b1) ? 1'b1 : 1'b0;
-		 end
-	       default:
-		 begin
-		    branch_success = 1'b0;
-		 end
-	     endcase
-	  end // if (branch_stmt)
-	else
-	  begin
-	     branch_success = 1'b0;
-	  end // else: !if(branch_stmt)
-	// immediate holds the number of bytes offset. We ignore the lower
-	// 2 bits as our core only supports 32-bit instructions.
-	pc_next = (branch_success == 1'b1) ? PC + immediate[31:2] : PC + 30'b1; // Ignore compressed instructions
-     end
+   assign stall = (!inst_valid) | data_stall;
 
-   always @(posedge clk)
-     begin
-	if (reset)
-	  begin
-	     PC <= RESET_ADDR;
-	  end
-	else
-	  begin
-	     if (!stall)
-	       begin
-		  PC <= pc_next;
-	       end
-	  end
-     end
+   pc_control
+     #(
+       .ADDR_WIDTH(ADDR_WIDTH),
+       .RESET_ADDR(RESET_ADDR)
+       )
+   pc_control_inst(.clk(clk),
+		   .reset(reset),
+		   .branch_stmt(branch_stmt),
+		   .zero(zero),
+		   .stall(stall),
+		   .funct3(funct3),
+		   .immediate(immediate),
+		   .PC(PC),
+		   .pc_next(pc_next),
+		   .pc_plus_four(pc_plus_four)
+		   );
 
 endmodule
