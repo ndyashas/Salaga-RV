@@ -100,7 +100,7 @@ void Memory_controller::l1_inst_cache_print(unsigned long int size_in_words)
 	        printf("Instruction memory:\n");
 		for (i = 0; i < size_in_words; ++i) {
 			word = this->l1_inst_cache[i];
-			printf("%02x %02x %02x %02x - Byte %05d\n",
+			printf("%02x %02x %02x %02x - Byte %08x\n",
 			       (word & 0xff000000) >> 24,
 			       (word & 0x00ff0000) >> 16,
 			       (word & 0x0000ff00) >> 8,
@@ -122,7 +122,7 @@ void Memory_controller::l1_data_cache_print(unsigned long int size_in_words)
 	        printf("Data memory:\n");
 		for (i = 0; i < size_in_words; ++i) {
 			word = this->l1_data_cache[i];
-			printf("%02x %02x %02x %02x - Byte %05d\n",
+			printf("%02x %02x %02x %02x - Byte %08x\n",
 			       (word & 0xff000000) >> 24,
 			       (word & 0x00ff0000) >> 16,
 			       (word & 0x0000ff00) >> 8,
