@@ -53,10 +53,11 @@ module eka_core_v1
    wire 			Reg_Wr;
 
    wire [31:0]			write_data, read_data1, read_data2, ALU_result;
-   wire [31:0]			alu_leg2, immediate;
+   wire [31:0]			alu_leg2, alu_leg1, immediate;
    wire [4:0]			read_addr1, read_addr2, write_addr, reg_file_read_addr1;
    wire				zero;
    wire				r1_zero;
+   wire				r1_pc;
    wire [2:0]			funct3;
    wire				stall;
 
@@ -76,6 +77,7 @@ module eka_core_v1
 			.mem_wr(mem_wr),
 			.mem_to_reg(mem_to_reg),
 			.r1_zero(r1_zero),
+			.r1_pc(r1_pc),
 			.ALU_Ctrl(ALU_Ctrl),
 			.ALU_Src(ALU_Src),
 			.Reg_Wr(Reg_Wr));
@@ -94,9 +96,10 @@ module eka_core_v1
 
 
    assign mem_wr_data = read_data2;
-   assign alu_leg2 = (ALU_Src) ? immediate : read_data2;
+   assign alu_leg2 = (ALU_Src == 1'b1) ? immediate : read_data2;
+   assign alu_leg1 = (r1_pc == 1'b1) ? {PC, 2'b0} : read_data1;
 
-   alu alu_inst(.alu_src1(read_data1),
+   alu alu_inst(.alu_src1(alu_leg1),
 		.alu_src2(alu_leg2),
 		.ALU_Ctrl(ALU_Ctrl),
 		.zero(zero),

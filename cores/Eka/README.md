@@ -8,7 +8,7 @@ The core interface is as shown below
 ## Currently supported instructions
  
 - [x] LUI
-- [ ] AUIPC
+- [x] AUIPC
 - [ ] JAL
 - [ ] JALR
 - [x] BEQ

@@ -16,6 +16,7 @@ module decoder
    mem_wr,
    mem_to_reg,
    r1_zero,
+   r1_pc,
    ALU_Ctrl,
    ALU_Src,
    Reg_Wr
@@ -29,6 +30,7 @@ module decoder
    output reg	     mem_wr;
    output reg	     mem_to_reg;
    output reg	     r1_zero;
+   output reg	     r1_pc;
    output reg [3:0]  ALU_Ctrl;
    output reg	     ALU_Src;
    output reg	     Reg_Wr;
@@ -62,6 +64,7 @@ module decoder
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'b0;
+	       r1_pc       = 1'b0;
 	       ALU_Op      = 2'b10;
 	       ALU_Src     = 1'b0;
 	       Reg_Wr      = 1'b1;
@@ -74,6 +77,7 @@ module decoder
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'b0;
+	       r1_pc       = 1'b0;
 	       ALU_Op      = 2'b10;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -86,6 +90,7 @@ module decoder
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b1;
 	       r1_zero     = 1'b0;
+	       r1_pc       = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -98,6 +103,7 @@ module decoder
 	       mem_wr      = 1'b1;
 	       mem_to_reg  = 1'bx;
 	       r1_zero     = 1'b0;
+	       r1_pc       = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b0;
@@ -110,6 +116,7 @@ module decoder
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'bx;
 	       r1_zero     = 1'b0;
+	       r1_pc       = 1'b0;
 	       ALU_Op      = 2'b01;
 	       ALU_Src     = 1'b0;
 	       Reg_Wr      = 1'b0;
@@ -126,11 +133,25 @@ module decoder
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'b1;
+	       r1_pc       = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
 	       immediate   = {instruction[31:12], 12'b0};
-	    end
+	    end // case: U_LUI
+	  U_AUIPC:
+	    begin
+	       branch_stmt = 1'b0;
+	       mem_rd      = 1'b0;
+	       mem_wr      = 1'b0;
+	       mem_to_reg  = 1'b0;
+	       r1_zero     = 1'bx;
+	       r1_pc       = 1'b1;
+	       ALU_Op      = 2'b00;
+	       ALU_Src     = 1'b1;
+	       Reg_Wr      = 1'b1;
+	       immediate   = {instruction[31:12], 12'b0};
+	    end // case: U_AUIPC
 
 	  default:
 	    begin
@@ -139,6 +160,7 @@ module decoder
 	       mem_wr      = 1'b0;
 	       mem_to_reg  = 1'bx;
 	       r1_zero     = 1'bx;
+	       r1_pc       = 1'bx;
 	       ALU_Op      = 2'bx;
 	       ALU_Src     = 1'bx;
 	       Reg_Wr      = 1'b0;

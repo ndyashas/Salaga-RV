@@ -33,7 +33,9 @@ int main(int argc, char **argv)
 	l1_inst_cache[16] = 0b00000000000000000010010100110111; // LUI rd(10) 2
 	l1_inst_cache[17] = 0b00000000101001001000010110110011; // ADD rd(11) rs1(9) rs2(10)
 	l1_inst_cache[18] = 0b00000010101100000010001000100011; // SW rs2(11) rs1(0) 36 //
-	l1_inst_cache[19] = 0b00000000000000000000000000000000;
+	l1_inst_cache[19] = 0b00000000000000000100001000010111; // AUIPC rd(4) 4
+
+	l1_inst_cache[20] = 0b00000000000000000000000000000000; // NOP
 
 	unsigned int* l1_data_cache = new unsigned int[4096];
 
@@ -57,7 +59,7 @@ int main(int argc, char **argv)
 	core->close_trace();
 
 	core->print_Regfile();
-	memory_controller->l1_inst_cache_print(20);
+	memory_controller->l1_inst_cache_print(24);
 	memory_controller->l1_data_cache_print(16);
 
 	delete memory_controller;
