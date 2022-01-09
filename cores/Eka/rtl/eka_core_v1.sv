@@ -51,24 +51,54 @@ module eka_core_v1
    wire 			ALU_Src;
    wire 			Reg_Wr;
 
-   wire [31:0]			write_data, read_data1, read_data2, ALU_result, __alu_or_mem_data;
-   wire [31:0]			alu_leg2, alu_leg1, immediate;
-   wire [4:0]			read_addr1, read_addr2, write_addr, reg_file_read_addr1;
+   wire [31:0]			read_data1, read_data2, ALU_result;
+   reg [31:0]			write_data;
+   wire [31:0]			immediate;
+   reg [31:0]			alu_leg2, alu_leg1;
+   reg [4:0]			reg_file_read_addr1;
+   reg [4:0]			read_addr1, read_addr2, write_addr;
    wire				zero;
    wire				r1_zero;
    wire				r1_pc;
-   wire [2:0]			funct3;
-   wire				stall;
+   reg [2:0]			funct3;
+   reg				stall;
    wire				jump;
 
-   assign inst_addr  = {PC, 2'b0};
+   assign inst_addr         = {PC, 2'b0};
+   assign data_addr         = ALU_result;
+   assign mem_wr_data       = read_data2;
 
+   always @(*)
+     begin
+	read_addr2          = instruction[24:20];
+	read_addr1          = instruction[19:15];
+	write_addr          = instruction[11:7];
+	funct3              = instruction[14:12];
 
-   assign read_addr2 = instruction[24:20];
-   assign read_addr1 = instruction[19:15];
-   assign write_addr = instruction[11:7];
-   assign data_addr  = ALU_result;
-   assign funct3     = instruction[14:12];
+	reg_file_read_addr1 = (r1_zero == 1'b1) ? 5'b0 : read_addr1;
+
+	alu_leg1            = (r1_pc == 1'b1) ? {PC, 2'b0} : read_data1;
+	alu_leg2            = (ALU_Src == 1'b1) ? immediate : read_data2;
+
+	stall               = (!inst_valid) | data_stall;
+
+	if (jump == 1'b1)
+	  begin
+	     write_data     = {pc_plus_four, 2'b00};
+	  end
+	else
+	  begin
+	     if (mem_to_reg == 1'b1)
+	       begin
+		  write_data = mem_rd_data;
+	       end
+	     else
+	       begin
+		  write_data = ALU_result;
+	       end
+	  end
+     end
+
 
    decoder decoder_inst(.instruction(instruction),
 			.immediate(immediate),
@@ -83,10 +113,6 @@ module eka_core_v1
 			.ALU_Src(ALU_Src),
 			.Reg_Wr(Reg_Wr));
 
-   assign __alu_or_mem_data = (mem_to_reg == 1'b1) ? mem_rd_data : ALU_result;
-   assign write_data = (jump == 1'b1) ? {pc_plus_four, 2'b00} : __alu_or_mem_data;
-
-   assign reg_file_read_addr1 = (r1_zero == 1'b1) ? 5'b0 : read_addr1;
 
    register_file register_file_inst(.clk(clk),
 				    .read_addr1(reg_file_read_addr1),
@@ -98,18 +124,12 @@ module eka_core_v1
 				    .read_data2(read_data2));
 
 
-   assign mem_wr_data = read_data2;
-   assign alu_leg2 = (ALU_Src == 1'b1) ? immediate : read_data2;
-   assign alu_leg1 = (r1_pc == 1'b1) ? {PC, 2'b0} : read_data1;
-
    alu alu_inst(.alu_src1(alu_leg1),
 		.alu_src2(alu_leg2),
 		.ALU_Ctrl(ALU_Ctrl),
 		.zero(zero),
 		.ALU_result(ALU_result));
 
-
-   assign stall = (!inst_valid) | data_stall;
 
    pc_control
      #(
