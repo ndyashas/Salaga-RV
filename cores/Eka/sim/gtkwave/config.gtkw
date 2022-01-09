@@ -5,7 +5,7 @@
 [dumpfile] "eka_core_v1_sim.vcd"
 [dumpfile_mtime] "Thu Jan  6 18:04:40 2022"
 [dumpfile_size] 20872
-[savefile] "gtk/config.gtkw"
+[savefile] "gtkwave/config.gtkw"
 [timestart] 9
 [size] 1864 1016
 [pos] -39 -39
@@ -27,7 +27,7 @@ TOP.inst_addr[31:0]
 TOP.inst_valid
 @4022
 [color] 2
-^>1 ./gtk/filters/rv32i-filter.py
+^>1 ./gtkwave/filters/rv32i-filter.py
 TOP.instruction[31:0]
 @28
 [color] 3
