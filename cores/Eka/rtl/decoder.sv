@@ -39,12 +39,11 @@ module decoder
 
    localparam	     R_TYPE  = 7'b0110011;
    localparam	     I_TYPE  = 7'b0010011;
-   localparam	     I_JALR  = 7'b1100111;
    localparam	     I_LOAD  = 7'b0000011;
    localparam	     S_TYPE  = 7'b0100011;
    localparam	     B_TYPE  = 7'b1100011;
-   localparam	     U_AUIPC = 7'b0010111;
    localparam	     U_LUI   = 7'b0110111;
+   localparam	     U_AUIPC = 7'b0010111;
    localparam	     J_JAL   = 7'b1101111;
    localparam	     J_JALR  = 7'b1100111;
 
@@ -176,6 +175,21 @@ module decoder
 	       // immediate's LSB is ignored as the addresses are 2-byte aligned. Similar to B-type instructions
 	       immediate   = {{12{instruction[31]}}, instruction[19:12], instruction[20], instruction[30:21], 1'b0};
 	    end // case: J_JAL
+	  J_JALR:
+	    begin
+	       branch_stmt = 1'bx;
+	       mem_rd      = 1'b0;
+	       mem_wr      = 1'b0;
+	       mem_to_reg  = 1'bx;
+	       r1_zero     = 1'b0;
+	       r1_pc       = 1'b0;
+	       jump        = 1'b1;
+	       ALU_Op      = 2'b00;
+	       ALU_Src     = 1'b1;
+	       Reg_Wr      = 1'b1;
+	       // immediate's LSB is ignored as the addresses are 2-byte aligned. Similar to B-type instructions
+	       immediate   = {{21{instruction[31]}}, instruction[30:20]};
+	    end // case: J_JALR
 
 	  default:
 	    begin

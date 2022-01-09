@@ -10,7 +10,7 @@ The core interface is as shown below
 - [x] LUI
 - [x] AUIPC
 - [x] JAL
-- [ ] JALR
+- [x] JALR
 - [x] BEQ
 - [x] BNE
 - [ ] BLT

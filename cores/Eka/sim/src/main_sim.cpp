@@ -32,7 +32,9 @@ int main(int argc, char **argv)
 	l1_inst_cache[18] = 0b00000010101100000010001000100011; // SW rs2(11) rs1(0) 36 // expect 12288
 	l1_inst_cache[19] = 0b00000000000000000100001000010111; // AUIPC rd(4) 4
 
-	l1_inst_cache[20] = 0b11111110110111111111000001101111; // JAL rd(0) -20
+	l1_inst_cache[20] = 0b00000000100000000000000011101111; // JAL rd(0) 8
+	l1_inst_cache[21] = 0b00000000000000000000000000000000; // NOP
+	l1_inst_cache[22] = 0b11111101010000001000010001100111; // JALR rd(0) -20
 
 	unsigned int* l1_data_cache = new unsigned int[4096];
 
