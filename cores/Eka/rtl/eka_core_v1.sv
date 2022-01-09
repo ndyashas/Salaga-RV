@@ -44,7 +44,6 @@ module eka_core_v1
    
    // Local wires and regesters
    wire [ADDR_WIDTH-1-2:0]	PC; // The lower two bits are always 0.
-   wire [ADDR_WIDTH-1-2:0]	pc_next;
    wire [ADDR_WIDTH-1-2:0]	pc_plus_four;
    wire 			branch_stmt;
    wire 			mem_to_reg;
@@ -52,7 +51,7 @@ module eka_core_v1
    wire 			ALU_Src;
    wire 			Reg_Wr;
 
-   wire [31:0]			write_data, read_data1, read_data2, ALU_result;
+   wire [31:0]			write_data, read_data1, read_data2, ALU_result, __alu_or_mem_data;
    wire [31:0]			alu_leg2, alu_leg1, immediate;
    wire [4:0]			read_addr1, read_addr2, write_addr, reg_file_read_addr1;
    wire				zero;
@@ -60,6 +59,7 @@ module eka_core_v1
    wire				r1_pc;
    wire [2:0]			funct3;
    wire				stall;
+   wire				jump;
 
    assign inst_addr  = {PC, 2'b0};
 
@@ -78,11 +78,14 @@ module eka_core_v1
 			.mem_to_reg(mem_to_reg),
 			.r1_zero(r1_zero),
 			.r1_pc(r1_pc),
+			.jump(jump),
 			.ALU_Ctrl(ALU_Ctrl),
 			.ALU_Src(ALU_Src),
 			.Reg_Wr(Reg_Wr));
 
-   assign write_data = (mem_to_reg == 1'b1) ? mem_rd_data : ALU_result;
+   assign __alu_or_mem_data = (mem_to_reg == 1'b1) ? mem_rd_data : ALU_result;
+   assign write_data = (jump == 1'b1) ? {pc_plus_four, 2'b00} : __alu_or_mem_data;
+
    assign reg_file_read_addr1 = (r1_zero == 1'b1) ? 5'b0 : read_addr1;
 
    register_file register_file_inst(.clk(clk),
@@ -118,10 +121,11 @@ module eka_core_v1
 		   .branch_stmt(branch_stmt),
 		   .zero(zero),
 		   .stall(stall),
+		   .jump(jump),
 		   .funct3(funct3),
 		   .immediate(immediate),
+		   .ALU_result(ALU_result),
 		   .PC(PC),
-		   .pc_next(pc_next),
 		   .pc_plus_four(pc_plus_four)
 		   );
 

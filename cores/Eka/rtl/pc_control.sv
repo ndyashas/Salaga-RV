@@ -12,12 +12,13 @@ module pc_control
    branch_stmt,
    zero,
    stall,
+   jump,
    funct3,
    immediate,
+   ALU_result,
 
    /* Outputs */
    PC,
-   pc_next,
    pc_plus_four
    );
 
@@ -26,13 +27,15 @@ module pc_control
    input wire			 branch_stmt;
    input wire			 zero;
    input wire			 stall;
+   input wire			 jump;
    input wire [2:0]		 funct3;
    input wire [31:0]		 immediate;
+   input wire [31:0]		 ALU_result;
 
    output reg [ADDR_WIDTH-1-2:0] PC; // The lower two bits are always 0.
-   output reg [ADDR_WIDTH-1-2:0] pc_next;
    output reg [ADDR_WIDTH-1-2:0] pc_plus_four;
 
+   reg [ADDR_WIDTH-1-2:0]	 pc_next;
    reg				 branch_success;
 
    // Calculation of pc_next
@@ -59,10 +62,23 @@ module pc_control
 	  begin
 	     branch_success = 1'b0;
 	  end // else: !if(branch_stmt)
+
+	pc_plus_four = PC + 30'b1;
+
 	// immediate holds the number of bytes offset. We ignore the lower
 	// 2 bits as our core only supports 32-bit instructions.
-	pc_plus_four = PC + 30'b1;
-	pc_next      = (branch_success == 1'b1) ? PC + immediate[31:2] : PC + 30'b1; // Ignore compressed instructions
+	if (jump == 1'b1)
+	  begin
+	     pc_next = ALU_result[31:2];
+	  end
+	else if (branch_success == 1'b1) // Ignoring compressed instruction extension
+	  begin
+	     pc_next = PC + immediate[31:2];
+	  end
+	else
+	  begin
+	     pc_next = PC + 30'b1;
+	  end
      end
 
    always @(posedge clk)

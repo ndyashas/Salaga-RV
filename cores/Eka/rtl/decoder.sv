@@ -17,6 +17,7 @@ module decoder
    mem_to_reg,
    r1_zero,
    r1_pc,
+   jump,
    ALU_Ctrl,
    ALU_Src,
    Reg_Wr
@@ -31,6 +32,7 @@ module decoder
    output reg	     mem_to_reg;
    output reg	     r1_zero;
    output reg	     r1_pc;
+   output reg	     jump;
    output reg [3:0]  ALU_Ctrl;
    output reg	     ALU_Src;
    output reg	     Reg_Wr;
@@ -65,6 +67,7 @@ module decoder
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'b0;
 	       r1_pc       = 1'b0;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b10;
 	       ALU_Src     = 1'b0;
 	       Reg_Wr      = 1'b1;
@@ -78,6 +81,7 @@ module decoder
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'b0;
 	       r1_pc       = 1'b0;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b10;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -91,6 +95,7 @@ module decoder
 	       mem_to_reg  = 1'b1;
 	       r1_zero     = 1'b0;
 	       r1_pc       = 1'b0;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -104,6 +109,7 @@ module decoder
 	       mem_to_reg  = 1'bx;
 	       r1_zero     = 1'b0;
 	       r1_pc       = 1'b0;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b0;
@@ -117,6 +123,7 @@ module decoder
 	       mem_to_reg  = 1'bx;
 	       r1_zero     = 1'b0;
 	       r1_pc       = 1'b0;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b01;
 	       ALU_Src     = 1'b0;
 	       Reg_Wr      = 1'b0;
@@ -134,6 +141,7 @@ module decoder
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'b1;
 	       r1_pc       = 1'b0;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
@@ -147,11 +155,27 @@ module decoder
 	       mem_to_reg  = 1'b0;
 	       r1_zero     = 1'bx;
 	       r1_pc       = 1'b1;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'b00;
 	       ALU_Src     = 1'b1;
 	       Reg_Wr      = 1'b1;
 	       immediate   = {instruction[31:12], 12'b0};
 	    end // case: U_AUIPC
+	  J_JAL:
+	    begin
+	       branch_stmt = 1'bx;
+	       mem_rd      = 1'b0;
+	       mem_wr      = 1'b0;
+	       mem_to_reg  = 1'bx;
+	       r1_zero     = 1'bx;
+	       r1_pc       = 1'b1;
+	       jump        = 1'b1;
+	       ALU_Op      = 2'b00;
+	       ALU_Src     = 1'b1;
+	       Reg_Wr      = 1'b1;
+	       // immediate's LSB is ignored as the addresses are 2-byte aligned. Similar to B-type instructions
+	       immediate   = {{12{instruction[31]}}, instruction[19:12], instruction[20], instruction[30:21], 1'b0};
+	    end // case: J_JAL
 
 	  default:
 	    begin
@@ -161,6 +185,7 @@ module decoder
 	       mem_to_reg  = 1'bx;
 	       r1_zero     = 1'bx;
 	       r1_pc       = 1'bx;
+	       jump        = 1'b0;
 	       ALU_Op      = 2'bx;
 	       ALU_Src     = 1'bx;
 	       Reg_Wr      = 1'b0;
