@@ -82,8 +82,14 @@ bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
 					     unsigned int mem_wr_data)
 {
 	if (this->l1_data_cache) {
-		/* TODO : memory access check */
-		this->l1_data_cache[data_addr/4] = mem_wr_data;
+		if (data_addr/4 < this->l1_data_cache_size_in_words) {
+			this->l1_data_cache[data_addr/4] = mem_wr_data;
+		}
+		else {
+		        printf("Data address out of bound:\n");
+			printf("Data requested : 0x%08x\n", data_addr * 4);
+		        printf("Memory size    : 0x%08lx\n", this->l1_data_cache_size_in_words * 4);
+		}
 	}
 
 	return false;
