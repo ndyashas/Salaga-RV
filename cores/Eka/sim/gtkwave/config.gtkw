@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Thu Jan  6 18:06:00 2022
+[*] Wed Jan 12 04:28:04 2022
 [*]
 [dumpfile] "eka_core_v1_sim.vcd"
-[dumpfile_mtime] "Thu Jan  6 18:04:40 2022"
-[dumpfile_size] 20872
+[dumpfile_mtime] "Wed Jan 12 04:26:45 2022"
+[dumpfile_size] 64981
 [savefile] "gtkwave/config.gtkw"
 [timestart] 9
 [size] 1864 1016
-[pos] -39 -39
-*-4.141781 19 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-4.141781 90 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.eka_core_v1.
 [sst_width] 233
@@ -19,10 +19,10 @@
 @28
 TOP.clk
 TOP.reset
-@23
+@22
 [color] 2
 TOP.inst_addr[31:0]
-@29
+@28
 [color] 2
 TOP.inst_valid
 @4022
@@ -32,7 +32,7 @@ TOP.instruction[31:0]
 @28
 [color] 3
 TOP.data_stall
-@420
+@22
 TOP.data_addr[31:0]
 @28
 [color] 3
@@ -44,6 +44,7 @@ TOP.mem_rd_data[31:0]
 [color] 3
 TOP.mem_wr
 @22
+TOP.mem_wr_mask[3:0]
 [color] 3
 TOP.mem_wr_data[31:0]
 [pattern_trace] 1

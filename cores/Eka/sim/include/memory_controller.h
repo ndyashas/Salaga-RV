@@ -31,7 +31,8 @@ public:
 	bool l1_data_cache_access(unsigned int data_addr,
 				  unsigned int& mem_rd_data);
 	bool l1_data_cache_update(unsigned int data_addr,
-				  unsigned int mem_wr_data);
+				  unsigned int mem_wr_data,
+				  unsigned short int mem_wr_mask);
 	void l1_inst_cache_print(unsigned long int size_in_words);
 	void l1_data_cache_print(unsigned long int size_in_words);
 };

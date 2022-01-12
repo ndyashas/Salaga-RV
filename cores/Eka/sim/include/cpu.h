@@ -29,6 +29,7 @@ private:
 	unsigned int inst_addr;
 	unsigned int data_addr;
 	unsigned int mem_wr_data;
+	unsigned short int mem_wr_mask;
 	unsigned short int mem_wr;
 	unsigned short int mem_rd;
 
@@ -97,7 +98,8 @@ void CPU<CPU_mod>::mem_wr_handler(void)
 	bool stall = this
 		->memory_controller
 		->l1_data_cache_update(this->data_addr,
-				       this->mem_wr_data);
+				       this->mem_wr_data,
+				       this->mem_wr_mask);
 	this->cpu_mod->data_stall = stall;
 }
 
@@ -145,6 +147,7 @@ void CPU<CPU_mod>::tick(void)
 	this->mem_wr = this->cpu_mod->mem_wr;
 	this->data_addr = this->cpu_mod->data_addr;
 	this->mem_wr_data = this->cpu_mod->mem_wr_data;
+	this->mem_wr_mask = this->cpu_mod->mem_wr_mask;
 
 	if (this->trace && this->tracer) tracer->dump(10*this->tick_count-1);
 

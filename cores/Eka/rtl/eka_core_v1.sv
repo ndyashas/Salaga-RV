@@ -22,6 +22,7 @@ module eka_core_v1
     inst_addr,
     data_addr,
     mem_wr_data,
+    mem_wr_mask,
     mem_wr,
     mem_rd
    );
@@ -38,6 +39,7 @@ module eka_core_v1
    output wire [ADDR_WIDTH-1:0] inst_addr;     // Address of the instruction to be read/written.
    output wire [31:0] 		data_addr;     // Address of the data to be read/written.
    output wire [31:0] 		mem_wr_data;   // Data to be written.
+   output wire [3:0]		mem_wr_mask;   // Memory mask. To be used as bank enables for byte-wide banks.
    output wire 			mem_wr;        // Asserted when the processor intends to write.
    output wire 			mem_rd;        // Required to disqualify unneccecary memory reads. Useful in the future?
    
@@ -55,6 +57,7 @@ module eka_core_v1
    reg [31:0]			write_data;
    wire [31:0]			immediate;
    reg [31:0]			alu_leg2, alu_leg1;
+   reg [31:0]			masked_mem_wr_data;
    reg [4:0]			reg_file_read_addr1;
    reg [4:0]			read_addr1, read_addr2, write_addr;
    wire				zero;
@@ -63,10 +66,13 @@ module eka_core_v1
    reg [2:0]			funct3;
    reg				stall;
    wire				jump;
+   reg [3:0]			mem_mask;
+
 
    assign inst_addr         = {PC, 2'b0};
    assign data_addr         = ALU_result;
-   assign mem_wr_data       = read_data2;
+   assign mem_wr_data       = masked_mem_wr_data;
+   assign mem_wr_mask       = mem_mask;
 
    always @(*)
      begin
@@ -96,7 +102,47 @@ module eka_core_v1
 	       begin
 		  write_data = ALU_result;
 	       end
+	  end // else: !if(jump == 1'b1)
+
+	// Generation of memory_wr_mask
+	mem_mask = 4'b0000;
+	if (funct3[1:0] == 2'b00) // byte access
+	  begin
+	     case(data_addr[1:0])
+	       2'b00:
+		 mem_mask = 4'b0001;
+	       2'b01:
+		 mem_mask = 4'b0010;
+	       2'b10:
+		 mem_mask = 4'b0100;
+	       2'b11:
+		 mem_mask = 4'b1000;
+	     endcase
 	  end
+	else if (funct3[1:0] == 2'b01) // half word access
+	  begin
+	     case(data_addr[1])
+	       1'b0:
+		 mem_mask = 4'b0011;
+	       1'b1:
+		 mem_mask = 4'b1100;
+	     endcase
+	  end
+	else if (funct3[1:0] == 2'b10) // word access
+	  begin
+	     mem_mask = 4'b1111;
+	  end
+	else // unknown access, probably double word access, unsupported
+	  begin
+	     mem_mask = 4'b0000;
+	  end
+
+	// This neat code is taken from Bruno Levy's project here: https://github.com/BrunoLevy/learn-fpga
+	masked_mem_wr_data[7:0]   = read_data2[7:0];
+	masked_mem_wr_data[15:8]  = (data_addr[0] == 1'b1) ? read_data2[7:0]  : read_data2[15:8];
+	masked_mem_wr_data[23:16] = (data_addr[1] == 1'b1) ? read_data2[7:0]  : read_data2[23:16];
+	masked_mem_wr_data[31:24] = (data_addr[0] == 1'b1) ? read_data2[7:0]  :
+				    (data_addr[1] == 1'b1) ? read_data2[15:8] : read_data2[31:24];
      end
 
 

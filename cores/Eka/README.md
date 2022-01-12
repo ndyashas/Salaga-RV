@@ -22,8 +22,8 @@ The core interface is as shown below
 - [x] LW
 - [ ] LBU
 - [ ] LHU
-- [ ] SB
-- [ ] SH
+- [x] SB
+- [x] SH
 - [x] SW
 - [x] ADDI
 - [ ] SLTI

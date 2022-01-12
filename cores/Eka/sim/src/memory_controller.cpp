@@ -79,11 +79,21 @@ bool Memory_controller::l1_data_cache_access(unsigned int data_addr,
 }
 
 bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
-					     unsigned int mem_wr_data)
+					     unsigned int mem_wr_data,
+					     unsigned short int mem_wr_mask)
 {
 	if (this->l1_data_cache) {
 		if (data_addr/4 < this->l1_data_cache_size_in_words) {
-			this->l1_data_cache[data_addr/4] = mem_wr_data;
+			// depending on the mask, we will have to update
+			// the memory.
+			if ((mem_wr_mask & 0x1) == 0x1)
+				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xffffff00) | (mem_wr_data & 0x000000ff);
+			if ((mem_wr_mask & 0x2) == 0x2)
+				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xffff00ff) | (mem_wr_data & 0x0000ff00);
+			if ((mem_wr_mask & 0x4) == 0x4)
+				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xff00ffff) | (mem_wr_data & 0x00ff0000);
+			if ((mem_wr_mask & 0x8) == 0x8)
+				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0x00ffffff) | (mem_wr_data & 0xff000000);
 		}
 		else {
 		        printf("Data address out of bound:\n");
