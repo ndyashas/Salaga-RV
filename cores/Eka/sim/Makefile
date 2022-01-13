@@ -1,21 +1,30 @@
-core_name := eka_core_v1
+CORE_NAME      := eka_core_v1
+CXX            := g++
+VERILATOR      := verilator
 
 VERILATOR_ROOT ?= $(shell bash -c 'verilator -V|grep VERILATOR_ROOT | head -1 | sed -e " s/^.*=\s*//"')
+VER_FLAGS      := -cc --trace -Wall -Wno-UNUSED -Wno-UNDRIVEN --top-module $(CORE_NAME)
 
-include_paths := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
-vinclude_src  := $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
-vflags        := -cc --trace -Wall -Wno-UNUSED -Wno-UNDRIVEN --top-module $(core_name)
-cpp_src       := $(wildcard src/*.cpp)
-cpp_headers   := $(wildcard include/*.h)
+CXX_SRC         = $(wildcard src/*.cpp) $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
+CXX_INC_DIRS   := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
+CXX_FLAGS      := -Wall -Wno-sign-compare
 
-$(core_name)_bin: obj_dir/V$(core_name)__ALL.o $(cpp_src) $(cpp_headers)
-	g++ $(include_paths) $(vinclude_src) $^ -o $@
+all: verilator_srcs test_elf sim_bin
 
-obj_dir/V$(core_name)__ALL.o: obj_dir/V$(core_name)__verFiles.dat
-	$(MAKE) -C obj_dir -f V$(core_name).mk
+verilator_srcs: obj_dir/V$(CORE_NAME)__verFiles.dat
 
-obj_dir/V$(core_name)__verFiles.dat: ../rtl/$(wildcard *.sv)
-	verilator $(vflags) ../rtl/*.sv
+obj_dir/V$(CORE_NAME)__verFiles.dat: ../rtl/$(wildcard *.sv)
+	$(VERILATOR) $(VER_FLAGS) ../rtl/*.sv
+	$(MAKE) -C obj_dir -f V$(CORE_NAME).mk
+
+test_elf:
+	$(MAKE) -C gen-software-binary -f Makefile all
+
+sim_bin: verilator_srcs test_elf $(CXX_SRC)
+	$(CXX) $(CXX_FLAGS) $(CXX_INC_DIRS) $(CXX_SRC) obj_dir/*.o -o $@
 
 clean:
-	$(RM) -rf obj_dir *_bin *.vcd
+	$(MAKE) -C gen-software-binary -f Makefile clean
+	$(RM) -rf obj_dir *_bin *.vcd *.o
+
+.PHONY: all verilator_srcs test_elf clean

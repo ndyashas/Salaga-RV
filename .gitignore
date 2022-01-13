@@ -3,3 +3,6 @@ obj_dir/
 *.xopp
 *_bin
 *.vcd
+*.o
+*.elf
+*.map
