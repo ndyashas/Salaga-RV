@@ -1,19 +1,11 @@
-CC          := riscv64-unknown-elf-gcc
-PROGRAM     := add-two-ints
+# Taken from https://stackoverflow.com/a/17845120
 
-MACH        := rv32i
-CFLAGS      := -Wall -static -lm -lgcc -march=$(MACH) -mabi=ilp32
-LDFLAGS     := -nostdlib -T linker-file.ld -Wl,-Map=$(PROGRAM)-final.map
+TOPTARGETS := all clean
 
-all: $(PROGRAM).elf
+SUBDIRS := $(wildcard */.)
 
-$(PROGRAM).elf: $(PROGRAM).o startup-script.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+$(TOPTARGETS): $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-clean:
-	rm -rf *.o *.elf *.map *.hex
-
-.PHONY: all clean
+.PHONY: $(TOPTARGETS) $(SUBDIRS)

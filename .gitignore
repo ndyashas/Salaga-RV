@@ -6,3 +6,6 @@ obj_dir/
 *.o
 *.elf
 *.map
+*.hex
+*.dissasm
+*.bin
