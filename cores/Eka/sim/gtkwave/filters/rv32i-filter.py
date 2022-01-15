@@ -12,6 +12,9 @@ def main():
         with tempfile.NamedTemporaryFile(mode='w') as asm_temp:
 
             while True:
+                obj_temp.truncate(0)
+                asm_temp.truncate(0)
+
                 l = fh_in.readline()
                 if not l:
                     return 0
@@ -23,8 +26,8 @@ def main():
 
                 asm_temp.write(".word 0x%s\n" % l)
                 asm_temp.flush()
-                subprocess.run(["riscv64-unknown-linux-gnu-as", "-march=rv32i", "-o", obj_temp.name, asm_temp.name])
-                result = subprocess.run(["riscv64-unknown-linux-gnu-objdump", "-d", obj_temp.name,
+                subprocess.run(["riscv64-unknown-elf-as", "-march=rv32i", "-o", obj_temp.name, asm_temp.name])
+                result = subprocess.run(["riscv64-unknown-elf-objdump", "-d", obj_temp.name,
                                          "-M", "numeric", "-M", "no-aliases"], capture_output=True)
                 lastline = result.stdout.splitlines()[-1]
                 chunks = lastline.decode().split('\t')
