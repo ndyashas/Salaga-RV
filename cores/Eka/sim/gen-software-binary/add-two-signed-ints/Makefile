@@ -1,1 +1,1 @@
-include ../make-proj-hex.mk
+include ../common/make-proj-hex.mk

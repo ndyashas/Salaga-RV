@@ -3,17 +3,18 @@ CC          := $(CC_PREFIX)-gcc
 PYTHON      := python3
 PROGRAM     := program
 
+TOOLS_DIR   := ../common
 MACH        := rv32i
-C_SRC       := $(wildcard *.c)
+C_SRC       := $(wildcard *.c) $(TOOLS_DIR)/startup-script.c
 C_OBJ       := $(patsubst %.c, %.o, $(C_SRC))
 CFLAGS      := -Wall -static -lm -lgcc -march=$(MACH) -mabi=ilp32 -o0
-LDFLAGS     := -nostartfiles -nostdlib -T linker-file.ld -Wl,-Map=$(PROGRAM)-final.map
+LDFLAGS     := -nostartfiles -nostdlib -T $(TOOLS_DIR)/linker-file.ld -Wl,-Map=$(PROGRAM)-final.map
 
 all: $(PROGRAM).hex
 
 $(PROGRAM).hex: $(PROGRAM).elf
 	$(CC_PREFIX)-objcopy -O binary $^ $(PROGRAM).bin
-	$(PYTHON) make-ascii-bin.py $(PROGRAM).bin $@
+	$(PYTHON) $(TOOLS_DIR)/make-ascii-bin.py $(PROGRAM).bin $@
 
 $(PROGRAM).elf: $(C_OBJ)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@

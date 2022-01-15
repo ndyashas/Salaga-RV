@@ -12,7 +12,7 @@ SECTIONS
 	.text :
 	{
 		. = ALIGN(4);
-		startup-script.o(.text)
+		../common/startup-script.o(.text)
 		*(.text)
 		. = ALIGN(4);
 	} > MEM
