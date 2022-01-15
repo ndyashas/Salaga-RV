@@ -8,6 +8,10 @@
 #ifndef __EKA_V1_MEM_HANDLER__
 #define __EKA_V1_MEM_HANDLER__
 
+// sizes in bytes
+#define I_CACHE_SIZE 16 * 1024
+#define D_CACHE_SIZE 16 * 32
+
 class Memory_controller
 {
 private:

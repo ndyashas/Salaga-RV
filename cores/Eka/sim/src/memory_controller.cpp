@@ -48,14 +48,8 @@ bool Memory_controller::l1_inst_cache_access(unsigned int inst_addr,
 					     unsigned int& instruction)
 {
 	if (this->l1_inst_cache) {
-		if (inst_addr/4 < this->l1_inst_cache_size_in_words) {
-			instruction = this->l1_inst_cache[inst_addr/4];
-		}
-		else {
-		        printf("Instruction address out of bound:\n");
-			printf("Instruction requested : 0x%08x\n", inst_addr * 4);
-		        printf("Memory size           : 0x%08lx\n", this->l1_inst_cache_size_in_words * 4);
-		}
+		inst_addr = inst_addr & (I_CACHE_SIZE - 1);
+		instruction = this->l1_inst_cache[inst_addr/4];
 	}
 
 	return false;
@@ -65,14 +59,8 @@ bool Memory_controller::l1_data_cache_access(unsigned int data_addr,
 					     unsigned int& mem_rd_data)
 {
 	if (this->l1_data_cache) {
-		if (data_addr/4 < this->l1_data_cache_size_in_words) {
-		        mem_rd_data = this->l1_data_cache[data_addr/4];
-		}
-		else {
-		        printf("Data address out of bound:\n");
-			printf("Data requested : 0x%08x\n", data_addr * 4);
-		        printf("Memory size    : 0x%08lx\n", this->l1_data_cache_size_in_words * 4);
-		}
+		data_addr = data_addr & (D_CACHE_SIZE - 1);
+		mem_rd_data = this->l1_data_cache[data_addr/4];
 	}
 
 	return false;
@@ -83,23 +71,15 @@ bool Memory_controller::l1_data_cache_update(unsigned int data_addr,
 					     unsigned short int mem_wr_mask)
 {
 	if (this->l1_data_cache) {
-		if (data_addr/4 < this->l1_data_cache_size_in_words) {
-			// depending on the mask, we will have to update
-			// the memory.
-			if ((mem_wr_mask & 0x1) == 0x1)
-				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xffffff00) | (mem_wr_data & 0x000000ff);
-			if ((mem_wr_mask & 0x2) == 0x2)
-				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xffff00ff) | (mem_wr_data & 0x0000ff00);
-			if ((mem_wr_mask & 0x4) == 0x4)
-				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xff00ffff) | (mem_wr_data & 0x00ff0000);
-			if ((mem_wr_mask & 0x8) == 0x8)
-				this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0x00ffffff) | (mem_wr_data & 0xff000000);
-		}
-		else {
-		        printf("Data address out of bound:\n");
-			printf("Data requested : 0x%08x\n", data_addr * 4);
-		        printf("Memory size    : 0x%08lx\n", this->l1_data_cache_size_in_words * 4);
-		}
+		data_addr = data_addr & (D_CACHE_SIZE - 1);
+		if ((mem_wr_mask & 0x1) == 0x1)
+			this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xffffff00) | (mem_wr_data & 0x000000ff);
+		if ((mem_wr_mask & 0x2) == 0x2)
+			this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xffff00ff) | (mem_wr_data & 0x0000ff00);
+		if ((mem_wr_mask & 0x4) == 0x4)
+			this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0xff00ffff) | (mem_wr_data & 0x00ff0000);
+		if ((mem_wr_mask & 0x8) == 0x8)
+			this->l1_data_cache[data_addr/4] = (this->l1_data_cache[data_addr/4] & 0x00ffffff) | (mem_wr_data & 0xff000000);
 	}
 
 	return false;
