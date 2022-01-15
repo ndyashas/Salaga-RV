@@ -61,7 +61,7 @@ CPU<CPU_mod>::CPU(unsigned long int total_sim_ticks,
 		  bool trace,
 		  bool debug_print)
 {
-	this->cpu_mod = new CPU_mod;
+	this->cpu_mod = new CPU_mod();
 	this->tick_count = 0l;
 	this->total_sim_ticks = total_sim_ticks;
 	if (!total_sim_ticks) {

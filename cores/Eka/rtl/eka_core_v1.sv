@@ -58,6 +58,7 @@ module eka_core_v1
    wire [31:0]			immediate;
    reg [31:0]			alu_leg2, alu_leg1;
    reg [31:0]			masked_mem_wr_data;
+   reg [31:0]			masked_mem_rd_data;
    reg [4:0]			reg_file_read_addr1;
    reg [4:0]			read_addr1, read_addr2, write_addr;
    wire				zero;
@@ -88,53 +89,58 @@ module eka_core_v1
 
 	stall               = (!inst_valid) | data_stall;
 
-	if (jump == 1'b1)
-	  begin
-	     write_data     = {pc_plus_four, 2'b00};
-	  end
-	else
-	  begin
-	     if (mem_to_reg == 1'b1)
-	       begin
-		  write_data = mem_rd_data;
-	       end
-	     else
-	       begin
-		  write_data = ALU_result;
-	       end
-	  end // else: !if(jump == 1'b1)
-
 	// Generation of memory_wr_mask
 	mem_mask = 4'b0000;
+	masked_mem_rd_data = mem_rd_data;
 	if (funct3[1:0] == 2'b00) // byte access
 	  begin
 	     case(data_addr[1:0])
 	       2'b00:
-		 mem_mask = 4'b0001;
+		 begin
+		    mem_mask = 4'b0001;
+		    masked_mem_rd_data = {{24{!funct3[2] & mem_rd_data[7]}}, mem_rd_data[7:0]};
+		 end
 	       2'b01:
-		 mem_mask = 4'b0010;
+		 begin
+		    mem_mask = 4'b0010;
+		    masked_mem_rd_data = {{24{!funct3[2] & mem_rd_data[15]}}, mem_rd_data[15:8]};
+		 end
 	       2'b10:
-		 mem_mask = 4'b0100;
+		 begin
+		    mem_mask = 4'b0100;
+		    masked_mem_rd_data = {{24{!funct3[2] & mem_rd_data[23]}}, mem_rd_data[23:16]};
+		 end
 	       2'b11:
-		 mem_mask = 4'b1000;
+		 begin
+		    mem_mask = 4'b1000;
+		    masked_mem_rd_data = {{24{!funct3[2] & mem_rd_data[31]}}, mem_rd_data[31:24]};
+		 end
 	     endcase
 	  end
 	else if (funct3[1:0] == 2'b01) // half word access
 	  begin
 	     case(data_addr[1])
 	       1'b0:
-		 mem_mask = 4'b0011;
+		 begin
+		    mem_mask = 4'b0011;
+		    masked_mem_rd_data = {{16{!funct3[2] & mem_rd_data[15]}}, mem_rd_data[15:0]};
+		 end
 	       1'b1:
-		 mem_mask = 4'b1100;
+		 begin
+		    mem_mask = 4'b1100;
+		    masked_mem_rd_data = {{16{!funct3[2] & mem_rd_data[31]}}, mem_rd_data[31:16]};
+		 end
 	     endcase
 	  end
 	else if (funct3[1:0] == 2'b10) // word access
 	  begin
 	     mem_mask = 4'b1111;
+	     masked_mem_rd_data = mem_rd_data;
 	  end
 	else // unknown access, probably double word access, unsupported
 	  begin
 	     mem_mask = 4'b0000;
+	     masked_mem_rd_data = mem_rd_data;
 	  end
 
 	// This neat code is taken from Bruno Levy's project here: https://github.com/BrunoLevy/learn-fpga
@@ -143,6 +149,23 @@ module eka_core_v1
 	masked_mem_wr_data[23:16] = (data_addr[1] == 1'b1) ? read_data2[7:0]  : read_data2[23:16];
 	masked_mem_wr_data[31:24] = (data_addr[0] == 1'b1) ? read_data2[7:0]  :
 				    (data_addr[1] == 1'b1) ? read_data2[15:8] : read_data2[31:24];
+
+
+	if (jump == 1'b1)
+	  begin
+	     write_data     = {pc_plus_four, 2'b00};
+	  end
+	else
+	  begin
+	     if (mem_to_reg == 1'b1)
+	       begin
+		  write_data = masked_mem_rd_data;
+	       end
+	     else
+	       begin
+		  write_data = ALU_result;
+	       end
+	  end // else: !if(jump == 1'b1)
      end
 
 

@@ -17,11 +17,11 @@ The core interface is as shown below
 - [ ] BGE
 - [ ] BLTU
 - [ ] BGEU
-- [ ] LB
-- [ ] LH
+- [x] LB
+- [x] LH
 - [x] LW
-- [ ] LBU
-- [ ] LHU
+- [x] LBU
+- [x] LHU
 - [x] SB
 - [x] SH
 - [x] SW
