@@ -219,7 +219,7 @@ void CPU<CPU_mod>::print_Regfile(void)
 {
 	int i;
 	printf("Register file:\n");
-	for (i = 0; i < 31; ++i) {
+	for (i = 0; i < 32; ++i) {
 		printf("r%02d: 0x%08x\n", i, this->cpu_mod->rootp->eka_core_v1__DOT__register_file_inst__DOT__reg_file[i]);
 	}
 	printf("\n");
