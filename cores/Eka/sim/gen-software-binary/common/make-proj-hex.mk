@@ -5,7 +5,7 @@ PROGRAM     := program
 
 TOOLS_DIR   := ../common
 MACH        := rv32i
-C_SRC       := $(wildcard *.c) $(TOOLS_DIR)/startup-script.c
+C_SRC       := $(wildcard *.c) $(TOOLS_DIR)/startup-script.c $(wildcard *.S)
 C_OBJ       := $(patsubst %.c, %.o, $(C_SRC))
 CFLAGS      := -Wall -static -lm -lgcc -march=$(MACH) -mabi=ilp32 -o0
 LDFLAGS     := -nostartfiles -nostdlib -T $(TOOLS_DIR)/linker-file.ld -Wl,-Map=$(PROGRAM)-final.map
@@ -20,7 +20,7 @@ $(PROGRAM).elf: $(C_OBJ)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 	$(CC_PREFIX)-objdump -Dz $@ > $(PROGRAM).dissasm
 
-%.o: %.c
+%.o: %.S
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
