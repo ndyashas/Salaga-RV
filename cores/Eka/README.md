@@ -26,8 +26,8 @@ The core interface is as shown below
 - [x] SH
 - [x] SW
 - [x] ADDI
-- [ ] SLTI
-- [ ] SLTIU
+- [x] SLTI
+- [x] SLTIU
 - [ ] XORI
 - [ ] ORI
 - [ ] ANDI
@@ -37,8 +37,8 @@ The core interface is as shown below
 - [x] ADD
 - [x] SUB
 - [ ] SLL
-- [ ] SLT
-- [ ] SLTU
+- [x] SLT
+- [x] SLTU
 - [x] XOR
 - [ ] SRL
 - [ ] SRA

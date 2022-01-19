@@ -14,6 +14,7 @@ main:
 	lbu t4, 0(t1)
 	lh t5, 0(t1)
 	lb t6, 0(t1)
+	ret
 
 .section .data
 _data:
