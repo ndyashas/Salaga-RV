@@ -53,6 +53,18 @@ module alu
 	    begin
 	       ALU_result = (alu_src1 < alu_src2) ? 32'b1 : 32'b0;
 	    end
+	  4'b0001:
+	    begin
+	       ALU_result = alu_src1 << alu_src2;
+	    end
+	  4'b0101:
+	    begin
+	       ALU_result = alu_src1 >> alu_src2;
+	    end
+	  4'b1101:
+	    begin
+	       ALU_result = alu_src1 >>> alu_src2;
+	    end
 	  default:
 	    begin
 	       ALU_result = 32'bx;

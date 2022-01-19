@@ -28,20 +28,20 @@ The core interface is as shown below
 - [x] ADDI
 - [x] SLTI
 - [x] SLTIU
-- [ ] XORI
-- [ ] ORI
-- [ ] ANDI
-- [ ] SLLI
-- [ ] SRLI
-- [ ] SRAI
+- [x] XORI
+- [x] ORI
+- [x] ANDI
+- [x] SLLI
+- [x] SRLI
+- [x] SRAI
 - [x] ADD
 - [x] SUB
-- [ ] SLL
+- [x] SLL
 - [x] SLT
 - [x] SLTU
 - [x] XOR
-- [ ] SRL
-- [ ] SRA
+- [x] SRL
+- [x] SRA
 - [x] OR
 - [x] AND
 - [ ] FENCE
