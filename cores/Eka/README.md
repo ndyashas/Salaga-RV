@@ -13,10 +13,10 @@ The core interface is as shown below
 - [x] JALR
 - [x] BEQ
 - [x] BNE
-- [ ] BLT
-- [ ] BGE
-- [ ] BLTU
-- [ ] BGEU
+- [x] BLT
+- [x] BGE
+- [x] BLTU
+- [x] BGEU
 - [x] LB
 - [x] LH
 - [x] LW

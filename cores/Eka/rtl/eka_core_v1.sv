@@ -68,6 +68,8 @@ module eka_core_v1
    reg				stall;
    wire				jump;
    reg [3:0]			mem_mask;
+   reg				Less_than_unsigned;
+   reg				Less_than;
 
 
    assign inst_addr         = {PC, 2'b0};
@@ -197,6 +199,8 @@ module eka_core_v1
 		.alu_src2(alu_leg2),
 		.ALU_Ctrl(ALU_Ctrl),
 		.zero(zero),
+		.Less_than(Less_than),
+		.Less_than_unsigned(Less_than_unsigned),
 		.ALU_result(ALU_result));
 
 
@@ -209,6 +213,8 @@ module eka_core_v1
 		   .reset(reset),
 		   .branch_stmt(branch_stmt),
 		   .zero(zero),
+		   .Less_than(Less_than),
+		   .Less_than_unsigned(Less_than_unsigned),
 		   .stall(stall),
 		   .jump(jump),
 		   .funct3(funct3),

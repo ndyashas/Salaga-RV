@@ -11,6 +11,8 @@ module pc_control
    reset,
    branch_stmt,
    zero,
+   Less_than,
+   Less_than_unsigned,
    stall,
    jump,
    funct3,
@@ -26,6 +28,8 @@ module pc_control
    input wire			 reset;
    input wire			 branch_stmt;
    input wire			 zero;
+   input wire			 Less_than;
+   input wire			 Less_than_unsigned;
    input wire			 stall;
    input wire			 jump;
    input wire [2:0]		 funct3;
@@ -51,6 +55,22 @@ module pc_control
 	       3'b001:
 		 begin
 		    branch_success = (zero != 1'b1) ? 1'b1 : 1'b0;
+		 end
+	       3'b100:
+		 begin
+		    branch_success = Less_than;
+		 end
+	       3'b110:
+		 begin
+		    branch_success = Less_than_unsigned;
+		 end
+	       3'b101:
+		 begin
+		    branch_success = ~(Less_than | zero);
+		 end
+	       3'b111:
+		 begin
+		    branch_success = ~(Less_than_unsigned | zero);
 		 end
 	       default:
 		 begin
