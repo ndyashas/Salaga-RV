@@ -8,7 +8,7 @@ MACH        := rv32i
 C_SRC       := $(wildcard *.c) $(TOOLS_DIR)/startup-script.c $(wildcard *.S)
 C_OBJ       := $(patsubst %.c, %.o, $(C_SRC))
 CFLAGS      := -Wall -static -lm -lgcc -march=$(MACH) -mabi=ilp32 -o0
-LDFLAGS     := -nostartfiles -nostdlib -T $(TOOLS_DIR)/linker-file.ld -Wl,-Map=$(PROGRAM)-final.map
+LDFLAGS     := -nostartfiles -T $(TOOLS_DIR)/linker-file.ld -Wl,-Map=$(PROGRAM)-final.map
 
 all: $(PROGRAM).hex
 
