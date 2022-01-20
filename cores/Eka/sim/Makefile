@@ -1,9 +1,9 @@
-CORE_NAME      := eka_core_v1
+CORE_NAME      := eka_chip
 CXX            := g++
 VERILATOR      := verilator
 
 VERILATOR_ROOT ?= $(shell bash -c 'verilator -V|grep VERILATOR_ROOT | head -1 | sed -e " s/^.*=\s*//"')
-VER_FLAGS      := -cc --trace -Wall -Wno-UNUSED --top-module $(CORE_NAME)
+VER_FLAGS      := -cc --trace --trace-max-array 128 -Wall -Wno-UNUSED --top-module $(CORE_NAME)
 
 CXX_SRC         = $(wildcard src/*.cpp) $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
 CXX_INC_DIRS   := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
@@ -18,8 +18,8 @@ test_prog_deps: gen-software-binary
 sim_host.elf: test_prog_deps obj_dir/V$(CORE_NAME)__verFiles.dat $(CXX_SRC)
 	$(CXX) $(CXX_FLAGS) $(CXX_INC_DIRS) $(CXX_SRC) obj_dir/*.o -o $@
 
-obj_dir/V$(CORE_NAME)__verFiles.dat: ../rtl/$(wildcard *.sv)
-	$(VERILATOR) $(VER_FLAGS) ../rtl/*.sv
+obj_dir/V$(CORE_NAME)__verFiles.dat: ../rtl/$(wildcard *.sv) rtl_top_level_wrapper/$(wildcard *.sv)
+	$(VERILATOR) $(VER_FLAGS) ../rtl/*.sv rtl_top_level_wrapper/*.sv
 	$(MAKE) -C obj_dir -f V$(CORE_NAME).mk
 
 clean:
