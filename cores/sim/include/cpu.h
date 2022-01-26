@@ -10,8 +10,8 @@
 #include "verilated.h"
 #include <verilated_vcd_c.h>
 
-#ifndef __EKA_V1_CORE__
-#define __EKA_V1_CORE__
+#ifndef __SALAGA_CORE__
+#define __SALAGA_CORE__
 
 template<class CPU_mod>
 class CPU {

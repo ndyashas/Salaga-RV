@@ -1,8 +1,10 @@
 /* 
  * This module brings the core, and the two L1 caches together. 
  */
+`include "config/config.svh";
 
-module eka_chip
+
+module salaga_chip
   (
    clk,
    reset
@@ -23,7 +25,7 @@ module eka_chip
    wire [31:0] data_addr;   
 
 
-   eka_core_v1 eka_core_v1
+   `CORE_VARIANT core_inst
      (.clk(clk),
       .reset(reset),
       .instruction(instruction),
