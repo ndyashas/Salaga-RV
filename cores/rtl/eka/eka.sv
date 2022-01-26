@@ -4,7 +4,7 @@
  * operations.
  */
 
-module eka_core_v1
+module eka
   #(
     parameter ADDR_WIDTH=32,
     parameter RESET_ADDR=30'h0000_0000

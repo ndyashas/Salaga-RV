@@ -1,0 +1,51 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Wed Jan 26 08:02:07 2022
+[*]
+[dumpfile] "salaga_chip_sim.vcd"
+[dumpfile_mtime] "Wed Jan 26 07:57:19 2022"
+[dumpfile_size] 130738
+[savefile] "gtkwave/config.gtkw"
+[timestart] 9
+[size] 1864 1016
+[pos] -51 -51
+*-4.141781 31 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[sst_width] 233
+[signals_width] 298
+[sst_expanded] 1
+[sst_vpaned_height] 363
+@28
+TOP.salaga_chip.clk
+TOP.salaga_chip.reset
+@22
+[color] 2
+TOP.salaga_chip.inst_addr[31:0]
+@28
+[color] 2
+TOP.salaga_chip.inst_stall
+@4022
+[color] 2
+^>1 ./gtkwave/filters/rv32i-filter.py
+TOP.salaga_chip.instruction[31:0]
+@22
+[color] 3
+TOP.salaga_chip.data_addr[31:0]
+@28
+[color] 3
+TOP.salaga_chip.data_stall
+[color] 3
+TOP.salaga_chip.mem_rd
+@22
+[color] 3
+TOP.salaga_chip.mem_rd_data[31:0]
+@28
+[color] 3
+TOP.salaga_chip.mem_wr
+@22
+[color] 3
+TOP.salaga_chip.mem_wr_data[31:0]
+[color] 3
+TOP.salaga_chip.mem_wr_mask[3:0]
+[pattern_trace] 1
+[pattern_trace] 0
