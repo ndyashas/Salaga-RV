@@ -21,7 +21,7 @@ SECTIONS
 	{
 		. = ALIGN(4);
 		KEEP(*(.salaga_mm_region)) /* This is ~512 bytes */
-		. = . + 512;
+		. = . + 508;
 		*(.data)
 		. = ALIGN(4);
 	} > D_MEM

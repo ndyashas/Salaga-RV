@@ -1,6 +1,6 @@
 module l1_memory_module
   #(
-    LOGICAL_ADD_WIDTH=9
+    LOGICAL_ADD_WIDTH=11
     )
   (
    /* Inputs */
