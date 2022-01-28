@@ -8,21 +8,20 @@ ENTRY(reset_handler)
  * |           |      8Kbytes     .text section
  * |           |      |
  * |           |      |
- * +-----------+  0x00010000
+ * +-----------+  0x00002000
  * |           |      |
- * |           |      4Kbytes     .salaga_mm_region
+ * |           |      2Kbytes     .salaga_mm_region
  * |           |      |
- * +-----------+  0x00018000
+ * +-----------+  0x00002800
  * |           |      |
- * |           |      4Kbytes     .data
+ * |           |      6Kbytes     .data
  * |           |      |
- * +-----------+  0x00020000
+ * +-----------+  0x00003fff
  */
 
 MEMORY
 {
-	I_MEM : ORIGIN = 0x00000000, LENGTH = 0x00010000 /* 8 KBytes */
-	D_MEM : ORIGIN = 0x00010000, LENGTH = 0x00010000 /* 8 KBytes */
+	MEM : ORIGIN = 0x00000000, LENGTH = 0x00004000 /* 16 KBytes */
 }
 
 SECTIONS
@@ -33,15 +32,20 @@ SECTIONS
 		../common/startup-script.o(.text)
 		*(.text)
 		. = ALIGN(4);
-	} > I_MEM
+	} > MEM
 
-	.data :
+	.salaga_mm_region 0x00002000:
 	{
 		. = ALIGN(4);
-		_start_of_data = .;
-		KEEP(*(.salaga_mm_region)) /* This is ~4Kbytes */
-		. = _start_of_data + 4*1024;
+		_start_of_salaga_mm_region = .;
+		KEEP(*(.salaga_mm_region)) /* This is ~2Kbytes */
+		. = ALIGN(4);
+	} > MEM
+
+	.data 0x00002800:
+	{
+		. = ALIGN(4);
 		*(.data)
 		. = ALIGN(4);
-	} > D_MEM
+	} > MEM
 }

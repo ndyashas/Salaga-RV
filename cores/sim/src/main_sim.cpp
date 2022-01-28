@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 	load_cache(core, D_CACHE, CACHE_SIZE/4, argv[1]);
 
 	core->open_trace("salaga_chip_sim.vcd");
+	core->reset();
 	while(!core->done()) {
 		core->tick();
 	}

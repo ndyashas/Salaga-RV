@@ -3,7 +3,7 @@ CXX            := g++
 VERILATOR      := verilator
 
 VERILATOR_ROOT ?= $(shell bash -c 'verilator -V|grep VERILATOR_ROOT | head -1 | sed -e " s/^.*=\s*//"')
-VER_FLAGS      := -cc --trace --trace-max-array 512 -Wall -Wno-UNUSED --top-module $(CORE_NAME)
+VER_FLAGS      := -cc --trace --trace-max-array 16384 -Wall -Wno-UNUSED --top-module $(CORE_NAME)
 
 CXX_SRC         = $(wildcard src/*.cpp) $(VERILATOR_ROOT)/include/verilated.cpp $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp
 CXX_INC_DIRS   := -I$(VERILATOR_ROOT)/include -I./obj_dir -I./include
