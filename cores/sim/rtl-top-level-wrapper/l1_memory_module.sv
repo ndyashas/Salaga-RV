@@ -1,6 +1,8 @@
+`include "config/config.svh";
+
 module l1_memory_module
   #(
-    LOGICAL_ADD_WIDTH=11
+    LOGICAL_ADD_WIDTH=`CACHE_ADDRESS_SIZE
     )
   (
    /* Inputs */

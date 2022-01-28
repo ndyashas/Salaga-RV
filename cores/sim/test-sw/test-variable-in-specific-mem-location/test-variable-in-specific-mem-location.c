@@ -2,14 +2,15 @@
  *
  */
 
-__attribute__((section(".salaga_mm_region")))int res;
+__attribute__((section(".salaga_mm_region")))unsigned int res[8*8];
 
 int main(void)
 {
-	int num1, num2;
-	num1 = -5;
-	num2 = 6;
-        res = num1 + num2;
+	int i;
+
+	for (i = 0; i < 2; ++i) {
+		res[i] = i;
+	}
 
 	return 0;
 }

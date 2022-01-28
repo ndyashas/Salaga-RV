@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	CPU<Vsalaga_chip>* core = new CPU<Vsalaga_chip>(100,
+	CPU<Vsalaga_chip>* core = new CPU<Vsalaga_chip>(1000,
 						  true,
 						  false);
 
