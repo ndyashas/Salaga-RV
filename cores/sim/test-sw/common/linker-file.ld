@@ -4,7 +4,8 @@ ENTRY(reset_handler)
 
 MEMORY
 {
-	MEM : ORIGIN = 0x00000000, LENGTH = 0x00001000
+	I_MEM : ORIGIN = 0x00000000, LENGTH = 0x00000400 /* 1 KBytes */
+	D_MEM : ORIGIN = 0x00000400, LENGTH = 0x00000400 /* 1 KBytes */
 }
 
 SECTIONS
@@ -15,11 +16,13 @@ SECTIONS
 		../common/startup-script.o(.text)
 		*(.text)
 		. = ALIGN(4);
-	} > MEM
+	} > I_MEM
 	.data :
 	{
 		. = ALIGN(4);
+		KEEP(*(.salaga_mm_region)) /* This is ~512 bytes */
+		. = . + 512;
 		*(.data)
 		. = ALIGN(4);
-	} > MEM
+	} > D_MEM
 }
