@@ -66,7 +66,7 @@ module pc_control
 		 end
 	       3'b101:
 		 begin
-		    branch_success = ~(Less_than | zero);
+		    branch_success = ~(Less_than);
 		 end
 	       3'b111:
 		 begin
