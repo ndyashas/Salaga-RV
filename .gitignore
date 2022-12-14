@@ -11,3 +11,6 @@ obj_dir/
 *.dissasm
 *.bin
 *.tmp.org
+a.out
+wave.vcd
+*_actual.dump

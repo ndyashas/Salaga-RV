@@ -32,7 +32,7 @@ module processor
    // Instruction IO
    output reg [31:0] op_inst_addr;
    input wire 	     ip_inst_valid;
-   input wire 	     ip_inst_from_imem;
+   input wire [31:0] ip_inst_from_imem;
 
    // Data IO
    output reg [31:0] op_data_addr;
@@ -45,5 +45,23 @@ module processor
    input wire 	     ip_data_valid;
    input wire [31:0 ] ip_data_from_dmem;
 
+
+   // Internal variables
+   reg [31:0] 	      PC;
+   reg [31:0] 	      next_pc;
+
+
+   always @(posedge clk)
+     begin
+	if (reset) PC <= 0;
+	else       PC <= next_pc;
+     end
+
+
+   always @(*)
+     begin
+	op_inst_addr      = PC;
+	next_pc           = PC + 32'h4;
+     end
 
 endmodule

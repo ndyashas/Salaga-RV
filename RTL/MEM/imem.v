@@ -24,7 +24,7 @@ module imem
    always @(*)
      begin : imem_block
 	op_inst_valid     = 1'b1;
-	op_inst_from_imem = mem[ip_inst_addr[$clog2(SIZE_IN_BYTES)-1:0]];
+	op_inst_from_imem = mem[ip_inst_addr[$clog2(SIZE_IN_BYTES)-1+2:2]];
      end
 
 endmodule
