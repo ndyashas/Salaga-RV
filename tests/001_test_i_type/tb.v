@@ -51,11 +51,11 @@ module tb;
 	// Drain pipelines
 	repeat(5) @(negedge clk);
 
-	// Dump the contents of dmem into a file
-	dump_file = $fopen("dmem_actual.dump");
-	for (i = 0; i < 8; i = i + 1)
+	// Dump the contents of register file into a file
+	dump_file = $fopen("rf_actual.dump");
+	for (i = 0; i < 32; i = i + 1)
 	  begin
-	     $fdisplay(dump_file, "Memory location #%5d : %h", i, dmem_0.mem[i]);
+	     $fdisplay(dump_file, "Register %d : %h", i, processor_0.register_file_0.mem[i]);
 	  end
 	$fclose(dump_file);
 	$finish;
