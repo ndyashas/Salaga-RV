@@ -33,6 +33,7 @@ module dmem
    output reg 	     op_data_valid;
    output reg [31:0] op_data_from_dmem;
 
+   reg [31:0] 	     mask;
 
    // Data memory
    reg [31:0] 	     mem [SIZE_IN_BYTES-1:0];
@@ -48,8 +49,14 @@ module dmem
      begin : dmem_write_block
 	if (ip_data_wr)
 	  begin
-	     // TODO: Take care of mask
-	     mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1:0]] <= ip_data_from_proc;
+	     if (ip_data_mask[0])
+	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][7:0]   <= ip_data_from_proc[7:0];
+	     if (ip_data_mask[1])
+	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][15:8]  <= ip_data_from_proc[15:8];
+	     if (ip_data_mask[2])
+	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][23:16] <= ip_data_from_proc[23:16];
+	     if (ip_data_mask[3])
+	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][31:24] <= ip_data_from_proc[31:24];
 	  end
      end
 
