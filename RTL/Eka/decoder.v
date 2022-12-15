@@ -15,7 +15,8 @@ module decoder
 
    alu_opcode,
    alu_src2_from_imm,
-   branch_inst
+   branch_inst,
+   auipc_inst
    );
 
    input wire [31:0] ip_inst;
@@ -32,6 +33,7 @@ module decoder
    output reg [3:0]  alu_opcode;
    output reg 	     alu_src2_from_imm;
    output reg 	     branch_inst;
+   output reg 	     auipc_inst;
 
    reg [6:0] 	      opcode;
 
@@ -68,6 +70,7 @@ module decoder
 	alu_src2_from_imm        = 1'b0;
 	alu_opcode               = 4'hx;
 	branch_inst              = 1'b0;
+	auipc_inst               = 1'b0;
 
 	case (opcode)
 	  7'b0010011: // I-Type
@@ -112,6 +115,14 @@ module decoder
 	       // let us reuse the RF->ALU->RF path
 	       // for the LUI instruction.
 	       read_addr1        = 5'h0;
+	    end
+	  7'b0010111: // U-AUIPC
+	    begin
+	       auipc_inst        = 1'b1;
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_U;
 	    end
 	endcase
 

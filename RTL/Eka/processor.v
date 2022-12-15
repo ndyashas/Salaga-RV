@@ -69,6 +69,7 @@ module processor
    wire [3:0] 	      alu_opcode;
    wire 	      alu_src2_from_imm;
    wire 	      branch_inst;
+   wire 	      auipc_inst;
 
    wire 	      minus_is_zero;
    wire 	      less_than;
@@ -113,7 +114,7 @@ module processor
 	  end
 
 	// Sources for ALU
-	alu_src1          = rf_read_data1;
+	alu_src1          = (auipc_inst == 1'b1) ? PC : rf_read_data1;
 	alu_src2          = (alu_src2_from_imm == 1'b1) ? immediate : rf_read_data2;
 
 	// Memory operations
@@ -191,7 +192,8 @@ module processor
       .funct7(FUNCT7),
       .alu_opcode(alu_opcode),
       .alu_src2_from_imm(alu_src2_from_imm),
-      .branch_inst(branch_inst)
+      .branch_inst(branch_inst),
+      .auipc_inst(auipc_inst)
    );
 
    register_file register_file_0
