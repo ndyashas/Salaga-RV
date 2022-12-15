@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pushd $(dirname "$0")
+
 # Clean
 rm -f a.out test_bin *.vcd *_actual.dump
 
