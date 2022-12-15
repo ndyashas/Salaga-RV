@@ -42,7 +42,7 @@ module dmem
      begin : dmem_read_block
 	// Ignore ip_data_rd for now. Treat all cycles as read cycles.
 	op_data_valid     = 1'b1;
-	op_data_from_dmem = mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1:0]];
+	op_data_from_dmem = mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]];
      end
 
    always @(posedge clk)

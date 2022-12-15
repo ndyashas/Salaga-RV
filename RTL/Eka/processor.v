@@ -76,6 +76,7 @@ module processor
    wire [31:0] 	      alu_result;
 
    reg 		      branch_success;
+   reg [31:0] 	      masked_data_from_dmem;
 
 
    always @(posedge clk)
@@ -148,9 +149,29 @@ module processor
 	op_data_from_proc[31:24] = (op_data_addr[0] == 1'b1) ? rf_read_data2[7:0]  :
 				   (op_data_addr[1] == 1'b1) ? rf_read_data2[15:8] : rf_read_data2[31:24];
 
+	// Data from loads
+	masked_data_from_dmem    = ip_data_from_dmem;
+	case (funct3[1:0])
+	  2'b00: // Byte access
+	    begin
+	       case (op_data_addr[1:0])
+		 2'b00: masked_data_from_dmem = {{24{~funct3[2] &  ip_data_from_dmem[7]}}, ip_data_from_dmem[7:0]};
+		 2'b01: masked_data_from_dmem = {{24{~funct3[2] & ip_data_from_dmem[15]}}, ip_data_from_dmem[15:8]};
+		 2'b10: masked_data_from_dmem = {{24{~funct3[2] & ip_data_from_dmem[23]}}, ip_data_from_dmem[23:16]};
+		 2'b11: masked_data_from_dmem = {{24{~funct3[2] & ip_data_from_dmem[31]}}, ip_data_from_dmem[31:24]};
+	       endcase
+	    end
+	  2'b01: // Half word access
+	    begin
+	       case (op_data_addr[1])
+		 1'b0: masked_data_from_dmem = {{16{~funct3[2] & ip_data_from_dmem[15]}}, ip_data_from_dmem[15:0]};
+		 1'b1: masked_data_from_dmem = {{16{~funct3[2] & ip_data_from_dmem[31]}}, ip_data_from_dmem[31:16]};
+	       endcase
+	    end
+	endcase
 
 	// Write back
-	rf_write_data     = alu_result;
+	rf_write_data            = (op_data_rd == 1'b1) ? masked_data_from_dmem : alu_result;
      end
 
 

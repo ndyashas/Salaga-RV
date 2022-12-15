@@ -65,7 +65,7 @@ module decoder
 	immediate                = 32'hx;
 	mem_write_en             = 1'b0;
 	mem_read_en              = 1'b0;
-	alu_src_from_imm              = 1'b0;
+	alu_src_from_imm         = 1'b0;
 	alu_opcode               = 4'hx;
 	branch_inst              = 1'b0;
 
@@ -93,6 +93,14 @@ module decoder
 	       alu_opcode        = 4'h0;
 	       alu_src_from_imm  = 1'b1;
 	       immediate         = immediate_S;
+	    end
+	  7'b0000011: // I-Load-Type
+	    begin
+	       write_en          = 1'b1;
+	       mem_read_en       = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src_from_imm  = 1'b1;
+	       immediate         = immediate_I;
 	    end
 	endcase
 
