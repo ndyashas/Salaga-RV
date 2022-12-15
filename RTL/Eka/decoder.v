@@ -16,7 +16,8 @@ module decoder
    alu_opcode,
    alu_src2_from_imm,
    branch_inst,
-   auipc_inst
+   alu_src1_from_pc,
+   jump_inst
    );
 
    input wire [31:0] ip_inst;
@@ -33,7 +34,8 @@ module decoder
    output reg [3:0]  alu_opcode;
    output reg 	     alu_src2_from_imm;
    output reg 	     branch_inst;
-   output reg 	     auipc_inst;
+   output reg 	     alu_src1_from_pc;
+   output reg 	     jump_inst;
 
    reg [6:0] 	      opcode;
 
@@ -70,7 +72,8 @@ module decoder
 	alu_src2_from_imm        = 1'b0;
 	alu_opcode               = 4'hx;
 	branch_inst              = 1'b0;
-	auipc_inst               = 1'b0;
+	alu_src1_from_pc               = 1'b0;
+	jump_inst                = 1'b0;
 
 	case (opcode)
 	  7'b0010011: // I-Type
@@ -118,11 +121,23 @@ module decoder
 	    end
 	  7'b0010111: // U-AUIPC
 	    begin
-	       auipc_inst        = 1'b1;
+	       alu_src1_from_pc  = 1'b1;
 	       write_en          = 1'b1;
 	       alu_opcode        = 4'h0;
 	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_U;
+	    end
+	  7'b1101111: // J-JAL
+	    begin
+	       jump_inst         = 1'b1;
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_J;
+	       // This will make the result of ALU calculate
+	       // PC + immediate_J which can then be fed back
+	       // to PC
+	       alu_src1_from_pc  = 1'b1;
 	    end
 	endcase
 

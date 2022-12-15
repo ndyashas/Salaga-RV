@@ -69,7 +69,8 @@ module processor
    wire [3:0] 	      alu_opcode;
    wire 	      alu_src2_from_imm;
    wire 	      branch_inst;
-   wire 	      auipc_inst;
+   wire 	      alu_src1_from_pc;
+   wire 	      jump_inst;
 
    wire 	      minus_is_zero;
    wire 	      less_than;
@@ -92,7 +93,7 @@ module processor
 	op_inst_addr      = PC;
 
 	// Calculating next PC
-	next_pc           = PC + 32'h4; // Default
+	next_pc           = (jump_inst == 1'b1) ? alu_result : PC + 32'h4;
 	branch_success    = 1'b0;       // Initialize branch_success to false
 
 	if (branch_inst) // Replace with a big if statement?
@@ -114,7 +115,7 @@ module processor
 	  end
 
 	// Sources for ALU
-	alu_src1          = (auipc_inst == 1'b1) ? PC : rf_read_data1;
+	alu_src1          = (alu_src1_from_pc == 1'b1) ? PC : rf_read_data1;
 	alu_src2          = (alu_src2_from_imm == 1'b1) ? immediate : rf_read_data2;
 
 	// Memory operations
@@ -172,7 +173,8 @@ module processor
 	endcase
 
 	// Write back
-	rf_write_data            = (op_data_rd == 1'b1) ? masked_data_from_dmem : alu_result;
+	if (jump_inst) rf_write_data    = PC + 32'h4;
+	else           rf_write_data    = (op_data_rd == 1'b1) ? masked_data_from_dmem : alu_result;
      end
 
 
@@ -193,7 +195,8 @@ module processor
       .alu_opcode(alu_opcode),
       .alu_src2_from_imm(alu_src2_from_imm),
       .branch_inst(branch_inst),
-      .auipc_inst(auipc_inst)
+      .alu_src1_from_pc(alu_src1_from_pc),
+      .jump_inst(jump_inst)
    );
 
    register_file register_file_0
