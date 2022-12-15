@@ -67,7 +67,7 @@ module processor
    reg [31:0] 	      alu_src2;
 
    wire [3:0] 	      alu_opcode;
-   wire 	      i_type_inst;
+   wire 	      alu_src_from_imm;
    wire 	      branch_inst;
 
    wire 	      minus_is_zero;
@@ -113,7 +113,41 @@ module processor
 
 	// Sources for ALU
 	alu_src1          = rf_read_data1;
-	alu_src2          = (i_type_inst == 1'b1) ? immediate : rf_read_data2;
+	alu_src2          = (alu_src_from_imm == 1'b1) ? immediate : rf_read_data2;
+
+	// Memory operations
+	op_data_addr = alu_result;
+
+	op_data_mask = 4'b1111; // Default word access
+	case (funct3[1:0])
+	  2'b00: // Byte access
+	    begin
+	       case (op_data_addr[1:0])
+		 2'b00: op_data_mask = 4'b0001;
+		 2'b01: op_data_mask = 4'b0010;
+		 2'b10: op_data_mask = 4'b0100;
+		 2'b11: op_data_mask = 4'b1000;
+	       endcase
+	    end
+	  2'b01: // Half word access
+	    begin
+	       case (op_data_addr[1])
+		 1'b0: op_data_mask = 4'b0011;
+		 1'b1: op_data_mask = 4'b1100;
+	       endcase
+	    end
+	endcase
+
+	// Data for stores
+	// This neat code is taken from Bruno Levy's project here: https://github.com/BrunoLevy/learn-fpga
+	// We need to align the byte/half-byte at the right place along with sending the write mask to the
+	// DMEM.
+	op_data_from_proc[7:0]   = rf_read_data2[7:0];
+	op_data_from_proc[15:8]  = (op_data_addr[0] == 1'b1) ? rf_read_data2[7:0]  : rf_read_data2[15:8];
+	op_data_from_proc[23:16] = (op_data_addr[1] == 1'b1) ? rf_read_data2[7:0]  : rf_read_data2[23:16];
+	op_data_from_proc[31:24] = (op_data_addr[0] == 1'b1) ? rf_read_data2[7:0]  :
+				   (op_data_addr[1] == 1'b1) ? rf_read_data2[15:8] : rf_read_data2[31:24];
+
 
 	// Write back
 	rf_write_data     = alu_result;
@@ -135,7 +169,7 @@ module processor
       .funct3(funct3),
       .funct7(FUNCT7),
       .alu_opcode(alu_opcode),
-      .i_type_inst(i_type_inst),
+      .alu_src_from_imm(alu_src_from_imm),
       .branch_inst(branch_inst)
    );
 

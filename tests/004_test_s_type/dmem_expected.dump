@@ -1,0 +1,8 @@
+Memory location           0 : ffffffff
+Memory location           4 : 0000ffff
+Memory location           8 : ffff0000
+Memory location          12 : 000000ff
+Memory location          16 : 0000ff00
+Memory location          20 : 00ff0000
+Memory location          24 : ff000000
+Memory location          28 : 00000000
