@@ -14,7 +14,7 @@ module decoder
    funct7,
 
    alu_opcode,
-   alu_src_from_imm,
+   alu_src2_from_imm,
    branch_inst
    );
 
@@ -30,7 +30,7 @@ module decoder
    output reg [2:0]  funct3;
    output reg [6:0]  funct7;
    output reg [3:0]  alu_opcode;
-   output reg 	     alu_src_from_imm;
+   output reg 	     alu_src2_from_imm;
    output reg 	     branch_inst;
 
    reg [6:0] 	      opcode;
@@ -65,7 +65,7 @@ module decoder
 	immediate                = 32'hx;
 	mem_write_en             = 1'b0;
 	mem_read_en              = 1'b0;
-	alu_src_from_imm         = 1'b0;
+	alu_src2_from_imm        = 1'b0;
 	alu_opcode               = 4'hx;
 	branch_inst              = 1'b0;
 
@@ -73,8 +73,8 @@ module decoder
 	  7'b0010011: // I-Type
 	    begin
 	       write_en          = 1'b1;
-	       alu_opcode        = (funct3 == 3'b101) ? {ip_inst[30], 3'b101} : {1'b0, funct3};
-	       alu_src_from_imm  = 1'b1;
+	       alu_opcode        = (funct3 == 3'b101) ? {ip_inst[30], funct3} : {1'b0, funct3};
+	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_I;
 	    end
 	  7'b0110011: // R-Type
@@ -91,7 +91,7 @@ module decoder
 	    begin
 	       mem_write_en      = 1'b1;
 	       alu_opcode        = 4'h0;
-	       alu_src_from_imm  = 1'b1;
+	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_S;
 	    end
 	  7'b0000011: // I-Load-Type
@@ -99,8 +99,19 @@ module decoder
 	       write_en          = 1'b1;
 	       mem_read_en       = 1'b1;
 	       alu_opcode        = 4'h0;
-	       alu_src_from_imm  = 1'b1;
+	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_I;
+	    end
+	  7'b0110111: // U-LUI
+	    begin
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_U;
+	       // Making the read_addr1 as 0 will
+	       // let us reuse the RF->ALU->RF path
+	       // for the LUI instruction.
+	       read_addr1        = 5'h0;
 	    end
 	endcase
 

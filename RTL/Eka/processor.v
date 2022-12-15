@@ -67,7 +67,7 @@ module processor
    reg [31:0] 	      alu_src2;
 
    wire [3:0] 	      alu_opcode;
-   wire 	      alu_src_from_imm;
+   wire 	      alu_src2_from_imm;
    wire 	      branch_inst;
 
    wire 	      minus_is_zero;
@@ -114,7 +114,7 @@ module processor
 
 	// Sources for ALU
 	alu_src1          = rf_read_data1;
-	alu_src2          = (alu_src_from_imm == 1'b1) ? immediate : rf_read_data2;
+	alu_src2          = (alu_src2_from_imm == 1'b1) ? immediate : rf_read_data2;
 
 	// Memory operations
 	op_data_addr = alu_result;
@@ -190,7 +190,7 @@ module processor
       .funct3(funct3),
       .funct7(FUNCT7),
       .alu_opcode(alu_opcode),
-      .alu_src_from_imm(alu_src_from_imm),
+      .alu_src2_from_imm(alu_src2_from_imm),
       .branch_inst(branch_inst)
    );
 
