@@ -14,7 +14,8 @@ module decoder
    funct7,
 
    alu_opcode,
-   i_type_inst
+   i_type_inst,
+   branch_inst
    );
 
    input wire [31:0] ip_inst;
@@ -30,6 +31,7 @@ module decoder
    output reg [6:0]  funct7;
    output reg [3:0]  alu_opcode;
    output reg 	     i_type_inst;
+   output reg 	     branch_inst;
 
    reg [6:0] 	      opcode;
 
@@ -64,6 +66,8 @@ module decoder
 	mem_write_en         = 1'b0;
 	mem_read_en          = 1'b0;
 	i_type_inst          = 1'b0;
+	alu_opcode           = 4'hx;
+	branch_inst          = 1'b0;
 
 	case (opcode)
 	  7'b0010011: // I-Type
@@ -77,6 +81,11 @@ module decoder
 	    begin
 	       write_en      = 1'b1;
 	       alu_opcode    = {ip_inst[30], funct3};
+	    end
+	  7'b1100011: // B-Type
+	    begin
+	       branch_inst   = 1'b1;
+	       immediate     = immediate_B;
 	    end
 	endcase
 

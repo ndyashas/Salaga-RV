@@ -60,7 +60,7 @@ module processor
    reg [31:0] 	      rf_write_data;
 
    wire [31:0] 	      immediate;
-   wire [2:0] 	      FUNCT3;
+   wire [2:0] 	      funct3;
    wire [6:0] 	      FUNCT7;
 
    reg [31:0] 	      alu_src1;
@@ -68,11 +68,14 @@ module processor
 
    wire [3:0] 	      alu_opcode;
    wire 	      i_type_inst;
+   wire 	      branch_inst;
 
-   wire 	      MINUS_IS_ZERO;
-   wire 	      LESS_THAN;
-   wire 	      LESS_THAN_UNSIGNED;
+   wire 	      minus_is_zero;
+   wire 	      less_than;
+   wire 	      less_than_unsigned;
    wire [31:0] 	      alu_result;
+
+   reg 		      branch_success;
 
 
    always @(posedge clk)
@@ -85,7 +88,28 @@ module processor
    always @(*)
      begin
 	op_inst_addr      = PC;
-	next_pc           = PC + 32'h4;
+
+	// Calculating next PC
+	next_pc           = PC + 32'h4; // Default
+	branch_success    = 1'b0;       // Initialize branch_success to false
+
+	if (branch_inst) // Replace with a big if statement?
+	  begin
+	     case (funct3)
+	       3'b000: // BEQ
+		 if (minus_is_zero)            next_pc = PC + immediate;
+	       3'b001: // BNEQ
+		 if (!minus_is_zero)           next_pc = PC + immediate;
+	       3'b100: // BLT
+		 if (less_than)                next_pc = PC + immediate;
+	       3'b101: // BGE
+		 if (!less_than)               next_pc = PC + immediate;
+	       3'b110: // BLTU
+		 if (less_than_unsigned)       next_pc = PC + immediate;
+	       3'b111: // BGEU
+		 if (!less_than_unsigned)      next_pc = PC + immediate;
+	     endcase
+	  end
 
 	// Sources for ALU
 	alu_src1          = rf_read_data1;
@@ -108,10 +132,11 @@ module processor
       .immediate(immediate),
       .mem_write_en(op_data_wr),
       .mem_read_en(op_data_rd),
-      .funct3(FUNCT3),
+      .funct3(funct3),
       .funct7(FUNCT7),
       .alu_opcode(alu_opcode),
-      .i_type_inst(i_type_inst)
+      .i_type_inst(i_type_inst),
+      .branch_inst(branch_inst)
    );
 
    register_file register_file_0
@@ -135,9 +160,9 @@ module processor
       .alu_src2(alu_src2),
       .alu_opcode(alu_opcode),
 
-      .minus_is_zero(MINUS_IS_ZERO),
-      .less_than(LESS_THAN),
-      .less_than_unsigned(LESS_THAN_UNSIGNED),
+      .minus_is_zero(minus_is_zero),
+      .less_than(less_than),
+      .less_than_unsigned(less_than_unsigned),
       .alu_result(alu_result)
       );
 
