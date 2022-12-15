@@ -139,6 +139,14 @@ module decoder
 	       // to PC
 	       alu_src1_from_pc  = 1'b1;
 	    end
+	  7'b1100111: // I-JALR
+	    begin
+	       jump_inst         = 1'b1;
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_I;
+	    end
 	endcase
 
      end
