@@ -14,6 +14,7 @@ exit_code=0
 for test_dir in */ ; do
     # Ignore symbolic links
     [ -L "${test_dir%/}" ] && continue
+    [ "${test_dir%/}" == "gtkwave" ] && continue;
 
     # Run the test
     "${test_dir}/run_test.sh" "${1}" >/dev/null 2>&1;
