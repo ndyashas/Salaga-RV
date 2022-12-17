@@ -244,6 +244,7 @@ module processor
 
    //--------------------------- MEM Stage ---------------------------
    reg [31:0]   op_data_from_proc_raw;
+   reg [31:0] 	masked_data_from_dmem;
 
    always @(*)
      begin
@@ -261,7 +262,6 @@ module processor
 	op_data_from_proc[23:16] = (op_data_addr[1] == 1'b1) ? op_data_from_proc_raw[7:0]  : op_data_from_proc_raw[23:16];
 	op_data_from_proc[31:24] = (op_data_addr[0] == 1'b1) ? op_data_from_proc_raw[7:0]  :
 				   (op_data_addr[1] == 1'b1) ? op_data_from_proc_raw[15:8] : op_data_from_proc_raw[31:24];
-
 
 	op_data_mask = 4'b1111; // Default word access
 	case (ex_mem_funct3[1:0])
@@ -282,6 +282,28 @@ module processor
 	       endcase
 	    end
 	endcase
+
+	// Data from loads
+	masked_data_from_dmem    = ip_data_from_dmem;
+	case (ex_mem_funct3[1:0])
+	  2'b00: // Byte access
+	    begin
+	       case (op_data_addr[1:0])
+		 2'b00: masked_data_from_dmem = {{24{~ex_mem_funct3[2] & ip_data_from_dmem[7]}}, ip_data_from_dmem[7:0]};
+		 2'b01: masked_data_from_dmem = {{24{~ex_mem_funct3[2] & ip_data_from_dmem[15]}}, ip_data_from_dmem[15:8]};
+		 2'b10: masked_data_from_dmem = {{24{~ex_mem_funct3[2] & ip_data_from_dmem[23]}}, ip_data_from_dmem[23:16]};
+		 2'b11: masked_data_from_dmem = {{24{~ex_mem_funct3[2] & ip_data_from_dmem[31]}}, ip_data_from_dmem[31:24]};
+	       endcase
+	    end
+	  2'b01: // Half word access
+	    begin
+	       case (op_data_addr[1])
+		 1'b0: masked_data_from_dmem = {{16{~ex_mem_funct3[2] & ip_data_from_dmem[15]}}, ip_data_from_dmem[15:0]};
+		 1'b1: masked_data_from_dmem = {{16{~ex_mem_funct3[2] & ip_data_from_dmem[31]}}, ip_data_from_dmem[31:16]};
+	       endcase
+	    end
+	endcase
+
      end
 
    // MEM-WB stage register
@@ -297,7 +319,7 @@ module processor
 	  end
 
 	mem_wb_write_addr        <= ex_mem_write_addr;
-	mem_wb_write_data        <= ex_mem_alu_result;
+	mem_wb_write_data        <= (ex_mem_mem_read_en == 1'b1) ? masked_data_from_dmem : ex_mem_alu_result;
      end
 
    //--------------------------- WB Stage  ---------------------------

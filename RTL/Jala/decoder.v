@@ -92,6 +92,14 @@ module decoder
 	       immediate         = immediate_S;
 	       store_inst        = 1'b1;
 	    end
+	  7'b0000011: // I-Load-Type
+	    begin
+	       write_en          = 1'b1;
+	       mem_read_en       = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_I;
+	    end
 	endcase
      end
 
