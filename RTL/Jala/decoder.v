@@ -7,7 +7,13 @@ module decoder
    immediate,
    alu_opcode,
    alu_src2_from_imm,
-   lui_inst
+
+   mem_write_en,
+   mem_read_en,
+
+   funct3,
+   lui_inst,
+   store_inst
    );
 
    input wire [31:0] ip_inst;
@@ -16,10 +22,13 @@ module decoder
    output reg [31:0] immediate;
    output reg [3:0]  alu_opcode;
    output reg 	     alu_src2_from_imm;
+   output reg 	     mem_write_en;
+   output reg 	     mem_read_en;
+   output reg [2:0]  funct3;
    output reg 	     lui_inst;
+   output reg 	     store_inst;
 
    reg [6:0] 	      opcode;
-   reg [2:0] 	      funct3;
 
    // Immediate values are calculated differently for different
    // instruction variants.
@@ -48,7 +57,11 @@ module decoder
 	alu_opcode               = 4'hx;
 	alu_src2_from_imm        = 1'b0;
 
+	mem_write_en             = 1'b0;
+	mem_read_en              = 1'b0;
+
 	lui_inst                 = 1'b0;
+	store_inst               = 1'b0;
 
 	case (opcode)
 	  7'b0110111: // U-LUI
@@ -70,6 +83,14 @@ module decoder
 	    begin
 	       write_en          = 1'b1;
 	       alu_opcode        = {ip_inst[30], funct3};
+	    end
+	  7'b0100011: // S-Type
+	    begin
+	       mem_write_en      = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_S;
+	       store_inst        = 1'b1;
 	    end
 	endcase
      end
