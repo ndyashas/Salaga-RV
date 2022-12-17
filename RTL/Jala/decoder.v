@@ -19,6 +19,7 @@ module decoder
    output reg 	     lui_inst;
 
    reg [6:0] 	      opcode;
+   reg [2:0] 	      funct3;
 
    // Immediate values are calculated differently for different
    // instruction variants.
@@ -33,6 +34,7 @@ module decoder
      begin
 	// Fixed values that do not change
 	opcode                   = ip_inst[6:0];
+	funct3                   = ip_inst[14:12];
 
 	immediate_I              = {{20{ip_inst[31]}}, ip_inst[31:20]};
 	immediate_S              = {{20{ip_inst[31]}}, ip_inst[31:25], ip_inst[11:7]};
@@ -56,6 +58,13 @@ module decoder
 	       alu_opcode        = 4'h0;
 	       alu_src2_from_imm = 1'b1;
 	       lui_inst          = 1'b1;
+	    end
+	  7'b0010011: // I-Type
+	    begin
+	       write_en          = 1'b1;
+	       alu_opcode        = (funct3 == 3'b101) ? {ip_inst[30], funct3} : {1'b0, funct3};
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_I;
 	    end
 	endcase
      end
