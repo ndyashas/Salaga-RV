@@ -33,6 +33,12 @@ module register_file
      begin
 	read_data1 = mem[read_addr1];
 	read_data2 = mem[read_addr2];
+
+	if (write_en)
+	  begin
+	     if (read_addr1 == write_addr) read_data1 = write_data;
+	     if (read_addr2 == write_addr) read_data2 = write_data;
+	  end
      end
 
    always @(posedge clk)
