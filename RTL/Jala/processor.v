@@ -46,15 +46,19 @@ module processor
    input wire [31:0 ] ip_data_from_dmem;
 
 
-   // Internal variables
+   //--------------------------- IF Stage ---------------------------
    reg [31:0] 	      PC;
    reg [31:0] 	      next_pc;
+
+   reg [31:0] 	      if_id_ip_inst_from_imem;
 
 
    always @(posedge clk)
      begin
 	if (reset) PC     <= 0;
 	else       PC     <= next_pc;
+
+	if_id_ip_inst_from_imem <= ip_inst_from_imem;
      end
 
 
