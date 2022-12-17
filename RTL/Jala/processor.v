@@ -94,6 +94,11 @@ module processor
    wire [31:0] id_read_data1;
    wire [31:0] id_read_data2;
 
+   reg 	       id_rs1_matches_s1;
+   reg 	       id_rs2_matches_s1;
+   reg 	       id_rs1_matches_s2;
+   reg 	       id_rs2_matches_s2;
+
    reg [4:0]   id_ex_write_addr;
    reg 	       id_ex_write_en;
    reg [31:0]  id_ex_immediate;
@@ -102,12 +107,27 @@ module processor
    reg [31:0]  id_ex_read_data1;
    reg [31:0]  id_ex_read_data2;
 
+   reg 	       id_ex_rs1_matches_s1;
+   reg 	       id_ex_rs2_matches_s1;
+   reg 	       id_ex_rs1_matches_s2;
+   reg 	       id_ex_rs2_matches_s2;
 
    always @(*)
      begin
 	id_read_addr1            = (id_lui_inst == 1'b1) ? 5'h0 : if_id_ip_inst_from_imem[19:15];
 	id_read_addr2            = if_id_ip_inst_from_imem[24:20];
 	id_write_addr            = if_id_ip_inst_from_imem[11:7];
+
+	// Generate forwarding signals
+	// Forwarding from MEM to a junior in EX
+	id_rs1_matches_s1        = ((id_read_addr1 != 5'h0) && (id_read_addr1 == id_ex_write_addr) && (id_ex_write_en)) ? 1'b1 : 1'b0;
+
+	// Forwarding from WB to a Store junior
+	id_rs2_matches_s1        = ((id_read_addr2 != 5'h0) && (id_read_addr2 == id_ex_write_addr) && (id_ex_write_en)) ? 1'b1 : 1'b0;;
+
+	// Forwarding from WB to a junior in EX
+	id_rs1_matches_s2        = ((id_read_addr1 != 5'h0) && (id_read_addr1 == ex_mem_write_addr) && (ex_mem_write_en)) ? 1'b1 : 1'b0;
+	id_rs2_matches_s2        = ((id_read_addr2 != 5'h0) && (id_read_addr2 == ex_mem_write_addr) && (ex_mem_write_en)) ? 1'b1 : 1'b0;
      end
 
    // ID-EX stage register
@@ -130,6 +150,11 @@ module processor
 
 	id_ex_read_data1         <= id_read_data1;
 	id_ex_read_data2         <= id_read_data2;
+
+	id_ex_rs1_matches_s1     <= id_rs1_matches_s1;
+	id_ex_rs2_matches_s1     <= id_rs2_matches_s1;
+	id_ex_rs1_matches_s2     <= id_rs1_matches_s2;
+	id_ex_rs2_matches_s2     <= id_rs2_matches_s2;
      end
 
    //--------------------------- EX Stage  ---------------------------
@@ -145,10 +170,20 @@ module processor
    reg [4:0]   ex_mem_write_addr;
    reg [31:0]  ex_mem_write_data;
 
+   reg 	       ex_mem_rs2_matches_s1;
+
    always @(*)
      begin
 	alu_src1                 = id_ex_read_data1;
 	alu_src2                 = (id_ex_alu_src2_from_imm == 1'b1) ? id_ex_immediate : id_ex_read_data2;
+
+	// Forwarding help from WB stage
+	if (id_ex_rs1_matches_s2 == 1'b1) alu_src1 = mem_wb_write_data;
+	if (id_ex_rs2_matches_s2 == 1'b1) alu_src2 = mem_wb_write_data;
+
+	// Forwarding help from MEM stage
+	if (id_ex_rs1_matches_s1 == 1'b1) alu_src1 = ex_mem_write_data;
+	if (id_ex_rs2_matches_s1 == 1'b1) alu_src2 = ex_mem_write_data;
      end
 
    // EX-MEM stage register
@@ -165,6 +200,8 @@ module processor
 
 	ex_mem_write_addr        <= id_ex_write_addr;
 	ex_mem_write_data        <= ex_alu_result;
+
+	ex_mem_rs2_matches_s1    <= id_ex_rs2_matches_s1;
      end
 
    //--------------------------- MEM Stage ---------------------------
