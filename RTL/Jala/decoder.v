@@ -66,6 +66,11 @@ module decoder
 	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_I;
 	    end
+	  7'b0110011: // R-Type
+	    begin
+	       write_en          = 1'b1;
+	       alu_opcode        = {ip_inst[30], funct3};
+	    end
 	endcase
      end
 
