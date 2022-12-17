@@ -58,6 +58,7 @@ module processor
 
    reg [31:0] 	     if_id_ip_inst_from_imem;
 
+   reg [31:0] 	     if_id_PC;
 
    always @(*)
      begin
@@ -78,12 +79,14 @@ module processor
 	else       if_id_ip_inst_from_imem <= ip_inst_from_imem[0];
 
 	if_id_ip_inst_from_imem[31:1] <= ip_inst_from_imem[31:1];
+	if_id_PC                      <= PC;
      end
 
    //--------------------------- ID Stage  ---------------------------
    wire        id_write_en;
    wire [31:0] id_immediate;
    wire [3:0]  id_alu_opcode;
+   wire        id_alu_src1_from_pc;
    wire        id_alu_src2_from_imm;
    wire        id_mem_write_en;
    wire        id_mem_read_en;
@@ -109,6 +112,7 @@ module processor
    reg 	       id_ex_write_en;
    reg [31:0]  id_ex_immediate;
    reg [3:0]   id_ex_alu_opcode;
+   reg 	       id_ex_alu_src1_from_pc;
    reg 	       id_ex_alu_src2_from_imm;
    reg [31:0]  id_ex_read_data1;
    reg [31:0]  id_ex_read_data2;
@@ -123,6 +127,7 @@ module processor
    reg 	       id_ex_rs2_matches_s2;
    reg 	       id_ex_rs2_matches_s1_st;
    reg 	       id_ex_rs2_matches_s2_st;
+   reg [31:0]  id_ex_PC;
 
 
    always @(*)
@@ -167,6 +172,7 @@ module processor
 
 	id_ex_immediate          <= id_immediate;
 	id_ex_alu_opcode         <= id_alu_opcode;
+	id_ex_alu_src1_from_pc   <= id_alu_src1_from_pc;
 	id_ex_alu_src2_from_imm  <= id_alu_src2_from_imm;
 
 	id_ex_read_data1         <= id_read_data1;
@@ -179,6 +185,8 @@ module processor
 	id_ex_rs2_matches_s2     <= id_rs2_matches_s2;
 	id_ex_rs2_matches_s1_st  <= id_rs2_matches_s1_st;
 	id_ex_rs2_matches_s2_st  <= id_rs2_matches_s2_st;
+
+	id_ex_PC                 <= if_id_PC;
      end
 
    //--------------------------- EX Stage  ---------------------------
@@ -206,7 +214,7 @@ module processor
 
    always @(*)
      begin
-	alu_src1                 = id_ex_read_data1;
+	alu_src1                 = (id_ex_alu_src1_from_pc == 1'b1)  ? id_ex_PC : id_ex_read_data1;
 	alu_src2                 = (id_ex_alu_src2_from_imm == 1'b1) ? id_ex_immediate : id_ex_read_data2;
 
 	// Forwarding help from WB stage
@@ -336,6 +344,7 @@ module processor
       .write_en(id_write_en),
       .immediate(id_immediate),
       .alu_opcode(id_alu_opcode),
+      .alu_src1_from_pc(id_alu_src1_from_pc),
       .alu_src2_from_imm(id_alu_src2_from_imm),
       .mem_write_en(id_mem_write_en),
       .mem_read_en(id_mem_read_en),

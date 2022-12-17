@@ -6,6 +6,7 @@ module decoder
    write_en,
    immediate,
    alu_opcode,
+   alu_src1_from_pc,
    alu_src2_from_imm,
 
    mem_write_en,
@@ -21,6 +22,7 @@ module decoder
    output reg 	     write_en;
    output reg [31:0] immediate;
    output reg [3:0]  alu_opcode;
+   output reg 	     alu_src1_from_pc;
    output reg 	     alu_src2_from_imm;
    output reg 	     mem_write_en;
    output reg 	     mem_read_en;
@@ -55,6 +57,7 @@ module decoder
 	write_en                 = 1'b0;
 	immediate                = 32'hx;
 	alu_opcode               = 4'hx;
+	alu_src1_from_pc         = 1'b0;
 	alu_src2_from_imm        = 1'b0;
 
 	mem_write_en             = 1'b0;
@@ -99,6 +102,14 @@ module decoder
 	       alu_opcode        = 4'h0;
 	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_I;
+	    end
+	  7'b0010111: // U-AUIPC
+	    begin
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src1_from_pc  = 1'b1;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_U;
 	    end
 	endcase
      end
