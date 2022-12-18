@@ -51,6 +51,10 @@ module processor
    reg [4:0] 	     mem_wb_write_addr;
    reg [31:0] 	     mem_wb_write_data;
 
+   reg 		     mem_wb_jump_inst;
+   reg 		     ex_mem_jump_inst;
+   reg [31:0] 	     mem_wb_PC;
+
    // Mem stage signals are used for branch, jump signals. Thus,
    // declared at the top.
    reg [31:0] 	     jump_next_pc;
@@ -68,7 +72,7 @@ module processor
    always @(*)
      begin
 	op_inst_addr      = PC;
-	next_pc           = (ex_mem_branch_successful == 1'b1) ? jump_next_pc : PC + 32'h4;
+	next_pc           = (ex_mem_branch_successful | ex_mem_jump_inst) ? jump_next_pc : PC + 32'h4;
      end
 
    always @(posedge clk)
@@ -96,6 +100,7 @@ module processor
    wire        id_lui_inst;
    wire        id_store_inst;
    wire        id_branch_inst;
+   wire        id_jump_inst;
 
    reg [4:0]   id_read_addr1;
    reg [4:0]   id_read_addr2;
@@ -133,6 +138,7 @@ module processor
    reg [31:0]  id_ex_PC;
 
    reg 	       id_ex_branch_inst;
+   reg 	       id_ex_jump_inst;
 
    reg 	       flush_if;
    reg 	       flush_id;
@@ -142,9 +148,9 @@ module processor
 
    always @(*)
      begin
-	flush_if                 = ex_mem_branch_successful;
-	flush_id                 = ex_mem_branch_successful;
-	flush_ex                 = ex_mem_branch_successful;
+	flush_if                 = ex_mem_branch_successful | ex_mem_jump_inst;
+	flush_id                 = ex_mem_branch_successful | ex_mem_jump_inst;
+	flush_ex                 = ex_mem_branch_successful | ex_mem_jump_inst;
 
 	if_inst_from_imem[0]     = (reset | flush_if) ? 1'b0 : if_id_ip_inst_from_imem[0];
 	if_inst_from_imem[31:1]  = if_id_ip_inst_from_imem[31:1];
@@ -178,6 +184,7 @@ module processor
 	     id_ex_mem_write_en  <= 1'b0;
 	     id_ex_mem_read_en   <= 1'b0;
 	     id_ex_branch_inst   <= 1'b0;
+	     id_ex_jump_inst     <= 1'b0;
 	  end
 	else
 	  begin
@@ -185,6 +192,7 @@ module processor
 	     id_ex_mem_write_en  <= id_mem_write_en;
 	     id_ex_mem_read_en   <= id_mem_read_en;
 	     id_ex_branch_inst   <= id_branch_inst;
+	     id_ex_jump_inst     <= id_jump_inst;
 	  end
 
 	id_ex_write_addr         <= id_write_addr;
@@ -262,6 +270,7 @@ module processor
 	     ex_mem_mem_write_en <= 1'b0;
 	     ex_mem_mem_read_en  <= 1'b0;
 	     ex_mem_branch_inst  <= 1'b0;
+	     ex_mem_jump_inst    <= 1'b0;
 	  end
 	else
 	  begin
@@ -269,6 +278,7 @@ module processor
 	     ex_mem_mem_write_en <= id_ex_mem_write_en;
 	     ex_mem_mem_read_en  <= id_ex_mem_read_en;
 	     ex_mem_branch_inst  <= id_ex_branch_inst;
+	     ex_mem_jump_inst    <= id_ex_jump_inst;
 	  end
 
 	ex_mem_write_addr        <= id_ex_write_addr;
@@ -369,6 +379,7 @@ module processor
 	     endcase
 	  end // if (ex_mem_branch_inst)
 
+	if (ex_mem_jump_inst)                  jump_next_pc = ex_mem_alu_result; //ex_mem_PC + 32'h4;
 	if (ex_mem_branch_successful)          jump_next_pc = ex_mem_PC + ex_mem_immediate;
      end
 
@@ -384,8 +395,11 @@ module processor
 	     mem_wb_write_en     <= ex_mem_write_en;
 	  end
 
+	mem_wb_PC                <= ex_mem_PC;
+	mem_wb_jump_inst         <= ex_mem_jump_inst;
 	mem_wb_write_addr        <= ex_mem_write_addr;
-	mem_wb_write_data        <= (ex_mem_mem_read_en == 1'b1) ? masked_data_from_dmem : ex_mem_alu_result;
+	mem_wb_write_data        <= (ex_mem_mem_read_en == 1'b1) ? masked_data_from_dmem :
+				    (ex_mem_jump_inst) ? ex_mem_PC + 32'h4 : ex_mem_alu_result;
      end
 
    //--------------------------- WB Stage  ---------------------------
@@ -409,7 +423,8 @@ module processor
       .funct3(id_funct3),
       .lui_inst(id_lui_inst),
       .store_inst(id_store_inst),
-      .branch_inst(id_branch_inst)
+      .branch_inst(id_branch_inst),
+      .jump_inst(id_jump_inst)
       );
 
    register_file register_file_0

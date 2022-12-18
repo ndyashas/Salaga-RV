@@ -15,7 +15,8 @@ module decoder
    funct3,
    lui_inst,
    store_inst,
-   branch_inst
+   branch_inst,
+   jump_inst
    );
 
    input wire [31:0] ip_inst;
@@ -31,6 +32,7 @@ module decoder
    output reg 	     lui_inst;
    output reg 	     store_inst;
    output reg 	     branch_inst;
+   output reg 	     jump_inst;
 
    reg [6:0] 	      opcode;
 
@@ -68,6 +70,7 @@ module decoder
 	lui_inst                 = 1'b0;
 	store_inst               = 1'b0;
 	branch_inst              = 1'b0;
+	jump_inst                = 1'b0;
 
 	case (opcode)
 	  7'b0110111: // U-LUI
@@ -118,6 +121,26 @@ module decoder
 	    begin
 	       branch_inst       = 1'b1;
 	       immediate         = immediate_B;
+	    end
+	  7'b1101111: // J-JAL
+	    begin
+	       jump_inst         = 1'b1;
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_J;
+	       // This will make the result of ALU calculate
+	       // PC + immediate_J which can then be fed back
+	       // to PC
+	       alu_src1_from_pc  = 1'b1;
+	    end
+	  7'b1100111: // I-JALR
+	    begin
+	       jump_inst         = 1'b1;
+	       write_en          = 1'b1;
+	       alu_opcode        = 4'h0;
+	       alu_src2_from_imm = 1'b1;
+	       immediate         = immediate_I;
 	    end
 	endcase
      end
