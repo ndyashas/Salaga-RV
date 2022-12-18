@@ -51,6 +51,11 @@ module processor
    reg [4:0] 	     mem_wb_write_addr;
    reg [31:0] 	     mem_wb_write_data;
 
+   // Mem stage signals are used for branch, jump signals. Thus,
+   // declared at the top.
+   reg [31:0] 	     jump_next_pc;
+   reg 		     ex_mem_branch_successful;
+
 
    //--------------------------- IF Stage ---------------------------
    reg [31:0] 	     PC;
@@ -63,7 +68,7 @@ module processor
    always @(*)
      begin
 	op_inst_addr      = PC;
-	next_pc           = PC + 32'h4;
+	next_pc           = (ex_mem_branch_successful == 1'b1) ? jump_next_pc : PC + 32'h4;
      end
 
    always @(posedge clk)
@@ -75,10 +80,7 @@ module processor
    // IF-ID stage register
    always @(posedge clk)
      begin
-	if (reset) if_id_ip_inst_from_imem <= 1'b0; // NOP
-	else       if_id_ip_inst_from_imem <= ip_inst_from_imem[0];
-
-	if_id_ip_inst_from_imem[31:1] <= ip_inst_from_imem[31:1];
+	if_id_ip_inst_from_imem       <= ip_inst_from_imem;
 	if_id_PC                      <= PC;
      end
 
@@ -93,6 +95,7 @@ module processor
    wire [2:0]  id_funct3;
    wire        id_lui_inst;
    wire        id_store_inst;
+   wire        id_branch_inst;
 
    reg [4:0]   id_read_addr1;
    reg [4:0]   id_read_addr2;
@@ -129,9 +132,23 @@ module processor
    reg 	       id_ex_rs2_matches_s2_st;
    reg [31:0]  id_ex_PC;
 
+   reg 	       id_ex_branch_inst;
+
+   reg 	       flush_if;
+   reg 	       flush_id;
+   reg 	       flush_ex;
+
+   reg [31:0]  if_inst_from_imem;
 
    always @(*)
      begin
+	flush_if                 = ex_mem_branch_successful;
+	flush_id                 = ex_mem_branch_successful;
+	flush_ex                 = ex_mem_branch_successful;
+
+	if_inst_from_imem[0]     = (reset | flush_if) ? 1'b0 : if_id_ip_inst_from_imem[0];
+	if_inst_from_imem[31:1]  = if_id_ip_inst_from_imem[31:1];
+
 	id_read_addr1            = (id_lui_inst == 1'b1) ? 5'h0 : if_id_ip_inst_from_imem[19:15];
 	id_read_addr2            = if_id_ip_inst_from_imem[24:20];
 	id_write_addr            = if_id_ip_inst_from_imem[11:7];
@@ -155,17 +172,19 @@ module processor
    // ID-EX stage register
    always @(posedge clk)
      begin
-	if (reset)
+	if (reset | flush_id)
 	  begin
 	     id_ex_write_en      <= 1'b0;
 	     id_ex_mem_write_en  <= 1'b0;
 	     id_ex_mem_read_en   <= 1'b0;
+	     id_ex_branch_inst   <= 1'b0;
 	  end
 	else
 	  begin
 	     id_ex_write_en      <= id_write_en;
 	     id_ex_mem_write_en  <= id_mem_write_en;
 	     id_ex_mem_read_en   <= id_mem_read_en;
+	     id_ex_branch_inst   <= id_branch_inst;
 	  end
 
 	id_ex_write_addr         <= id_write_addr;
@@ -211,6 +230,14 @@ module processor
    reg [31:0]  ex_mem_read_data2;
    reg [2:0]   ex_mem_funct3;
 
+   reg 	       ex_mem_branch_inst;
+
+   reg [31:0]  ex_mem_PC;
+   reg [31:0]  ex_mem_immediate;
+
+   reg 	       ex_mem_minus_is_zero;
+   reg 	       ex_mem_less_than;
+   reg 	       ex_mem_less_than_unsigned;
 
    always @(*)
      begin
@@ -229,17 +256,19 @@ module processor
    // EX-MEM stage register
    always @(posedge clk)
      begin
-	if (reset)
+	if (reset | flush_ex)
 	  begin
 	     ex_mem_write_en     <= 1'b0;
 	     ex_mem_mem_write_en <= 1'b0;
 	     ex_mem_mem_read_en  <= 1'b0;
+	     ex_mem_branch_inst  <= 1'b0;
 	  end
 	else
 	  begin
 	     ex_mem_write_en     <= id_ex_write_en;
 	     ex_mem_mem_write_en <= id_ex_mem_write_en;
 	     ex_mem_mem_read_en  <= id_ex_mem_read_en;
+	     ex_mem_branch_inst  <= id_ex_branch_inst;
 	  end
 
 	ex_mem_write_addr        <= id_ex_write_addr;
@@ -248,6 +277,13 @@ module processor
 
 	ex_mem_funct3            <= id_ex_funct3;
 	ex_mem_rs2_matches_s1_st <= id_ex_rs2_matches_s1_st;
+
+	ex_mem_PC                <= id_ex_PC;
+	ex_mem_immediate         <= id_ex_immediate;
+
+	ex_mem_minus_is_zero     <= ex_minus_is_zero;
+	ex_mem_less_than         <= ex_less_than;
+	ex_mem_less_than_unsigned <= ex_less_than_unsigned;
      end
 
    //--------------------------- MEM Stage ---------------------------
@@ -312,6 +348,28 @@ module processor
 	    end
 	endcase
 
+	// Branch instruction
+	ex_mem_branch_successful  = 1'b0;
+	jump_next_pc              = 32'hx;
+	if (ex_mem_branch_inst)
+	  begin
+	     case (ex_mem_funct3)
+	       3'b000: // BEQ
+		 if (ex_mem_minus_is_zero)            ex_mem_branch_successful  = 1'b1;
+	       3'b001: // BNEQ
+		 if (!ex_mem_minus_is_zero)           ex_mem_branch_successful  = 1'b1;
+	       3'b100: // BLT
+		 if (ex_mem_less_than)                ex_mem_branch_successful  = 1'b1;
+	       3'b101: // BGE
+		 if (!ex_mem_less_than)               ex_mem_branch_successful  = 1'b1;
+	       3'b110: // BLTU
+		 if (ex_mem_less_than_unsigned)       ex_mem_branch_successful  = 1'b1;
+	       3'b111: // BGEU
+		 if (!ex_mem_less_than_unsigned)      ex_mem_branch_successful  = 1'b1;
+	     endcase
+	  end // if (ex_mem_branch_inst)
+
+	if (ex_mem_branch_successful)          jump_next_pc = ex_mem_PC + ex_mem_immediate;
      end
 
    // MEM-WB stage register
@@ -339,7 +397,7 @@ module processor
 
    decoder decoder_0
      (
-      .ip_inst(if_id_ip_inst_from_imem),
+      .ip_inst(if_inst_from_imem),
 
       .write_en(id_write_en),
       .immediate(id_immediate),
@@ -350,7 +408,8 @@ module processor
       .mem_read_en(id_mem_read_en),
       .funct3(id_funct3),
       .lui_inst(id_lui_inst),
-      .store_inst(id_store_inst)
+      .store_inst(id_store_inst),
+      .branch_inst(id_branch_inst)
       );
 
    register_file register_file_0

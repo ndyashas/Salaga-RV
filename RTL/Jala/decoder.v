@@ -14,7 +14,8 @@ module decoder
 
    funct3,
    lui_inst,
-   store_inst
+   store_inst,
+   branch_inst
    );
 
    input wire [31:0] ip_inst;
@@ -29,6 +30,7 @@ module decoder
    output reg [2:0]  funct3;
    output reg 	     lui_inst;
    output reg 	     store_inst;
+   output reg 	     branch_inst;
 
    reg [6:0] 	      opcode;
 
@@ -65,6 +67,7 @@ module decoder
 
 	lui_inst                 = 1'b0;
 	store_inst               = 1'b0;
+	branch_inst              = 1'b0;
 
 	case (opcode)
 	  7'b0110111: // U-LUI
@@ -110,6 +113,11 @@ module decoder
 	       alu_src1_from_pc  = 1'b1;
 	       alu_src2_from_imm = 1'b1;
 	       immediate         = immediate_U;
+	    end
+	  7'b1100011: // B-Type
+	    begin
+	       branch_inst       = 1'b1;
+	       immediate         = immediate_B;
 	    end
 	endcase
      end
