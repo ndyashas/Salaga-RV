@@ -15,7 +15,7 @@ jobs:
           sudo apt install iverilog
       - name: Run test
         run: |
-          ./tests/run_unit_tests.sh Eka
+          ./tests/unit-tests/run_unit_tests.sh Eka
 
   Jala-unit-tests:
     runs-on: ubuntu-latest
@@ -26,4 +26,4 @@ jobs:
           sudo apt install iverilog
       - name: Run test
         run: |
-          ./tests/run_unit_tests.sh Jala
+          ./tests/unit-tests/run_unit_tests.sh Jala
