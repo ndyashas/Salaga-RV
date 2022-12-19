@@ -13,18 +13,18 @@ vvp test_bin
 diff -q rf_expected.dump rf_actual.dump >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-    echo "FAILED: JALR-Type test - Register file."
+    echo "FAILED: Expected and actual register file contents differ."
     exit 1
 else
-    echo "PASSED: JALR-Type test - Register file."
+    echo "PASSED: Expected and actual register file contents are same!"
 fi
 
 diff -q dmem_expected.dump dmem_actual.dump >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-    echo "FAILED: JALR-Type test - DMEM."
+    echo "FAILED: Expected and actual DMEM contents differ."
     exit 1
 else
-    echo "PASSED: JALR-Type test - DMEM."
+    echo "PASSED: Expected and actual DMEM contents are same!"
     exit 0
 fi

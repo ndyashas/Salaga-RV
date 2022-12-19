@@ -13,9 +13,18 @@ vvp test_bin
 diff -q rf_expected.dump rf_actual.dump >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-    echo "FAILED: R-Type test."
+    echo "FAILED: Expected and actual register file contents differ."
     exit 1
 else
-    echo "PASSED: R-Type test."
+    echo "PASSED: Expected and actual register file contents are same!"
+fi
+
+diff -q dmem_expected.dump dmem_actual.dump >/dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "FAILED: Expected and actual DMEM contents differ."
+    exit 1
+else
+    echo "PASSED: Expected and actual DMEM contents are same!"
     exit 0
 fi

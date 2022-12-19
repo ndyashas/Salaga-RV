@@ -111,7 +111,7 @@ module tb;
       .ip_data_from_dmem(data_from_dmem)
       );
 
-   imem #(.SIZE_IN_BYTES(16)) imem_0
+   imem #(.SIZE_IN_BYTES(20)) imem_0
      (
       .ip_inst_addr(inst_addr),
       .op_inst_valid(inst_valid),
