@@ -6,7 +6,7 @@ pushd $(dirname "$0")
 rm -f a.out test_bin *.vcd *_actual.dump
 
 # Compile design and run
-iverilog tb.v ../../RTL/MEM/* ../../RTL/"${1}"/* -o test_bin
+iverilog tb.v ../../RTL/MEM/* ../../RTL/CORES/"${1}"/* -o test_bin
 vvp test_bin
 
 # Check correctness
