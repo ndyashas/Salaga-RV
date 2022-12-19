@@ -52,8 +52,11 @@ module processor
    reg [31:0] 	     mem_wb_write_data;
 
    reg 		     mem_wb_jump_inst;
+
+   // Misc signals from other stages that affect previous stages.
    reg 		     ex_mem_jump_inst;
    reg [31:0] 	     mem_wb_PC;
+   reg 		     id_stall;
 
    // Mem stage signals are used for branch, jump signals. Thus,
    // declared at the top.
@@ -77,14 +80,17 @@ module processor
 
    always @(posedge clk)
      begin
-	if (reset) PC     <= 0;
-	else       PC     <= next_pc;
+	if (reset)             PC     <= 0;
+	else if (!id_stall)    PC     <= next_pc;
      end
 
    // IF-ID stage register
    always @(posedge clk)
      begin
-	if_id_ip_inst_from_imem       <= ip_inst_from_imem;
+	if (!id_stall)
+	  begin
+	     if_id_ip_inst_from_imem       <= ip_inst_from_imem;
+	  end
 	if_id_PC                      <= PC;
      end
 
@@ -144,7 +150,7 @@ module processor
    reg 	       flush_id;
    reg 	       flush_ex;
 
-   reg [31:0]  if_inst_from_imem;
+   reg [31:0]  id_inst_from_imem;
 
    always @(*)
      begin
@@ -152,8 +158,8 @@ module processor
 	flush_id                 = ex_mem_branch_successful | ex_mem_jump_inst;
 	flush_ex                 = ex_mem_branch_successful | ex_mem_jump_inst;
 
-	if_inst_from_imem[0]     = (reset | flush_if) ? 1'b0 : if_id_ip_inst_from_imem[0];
-	if_inst_from_imem[31:1]  = if_id_ip_inst_from_imem[31:1];
+	id_inst_from_imem[0]     = (reset | flush_if) ? 1'b0 : if_id_ip_inst_from_imem[0];
+	id_inst_from_imem[31:1]  = if_id_ip_inst_from_imem[31:1];
 
 	id_read_addr1            = (id_lui_inst == 1'b1) ? 5'h0 : if_id_ip_inst_from_imem[19:15];
 	id_read_addr2            = if_id_ip_inst_from_imem[24:20];
@@ -173,12 +179,15 @@ module processor
 	// Forwarding signal for store junior
 	id_rs2_matches_s1_st     = ((id_read_addr2 != 5'h0) && (id_read_addr2 == id_ex_write_addr) && (id_ex_write_en)) ? 1'b1 : 1'b0;
 	id_rs2_matches_s2_st     = ((id_read_addr2 != 5'h0) && (id_read_addr2 == ex_mem_write_addr) && (ex_mem_write_en)) ? 1'b1 : 1'b0;
+
+	// Stalls -> When a dependent junior instruction arrives behind a load instruction.
+	id_stall                 = (id_rs1_matches_s1 | id_rs2_matches_s1) & id_ex_mem_read_en & (~flush_ex);
      end
 
    // ID-EX stage register
    always @(posedge clk)
      begin
-	if (reset | flush_id)
+	if (reset | flush_id | id_stall)
 	  begin
 	     id_ex_write_en      <= 1'b0;
 	     id_ex_mem_write_en  <= 1'b0;
@@ -188,7 +197,7 @@ module processor
 	  end
 	else
 	  begin
-	     id_ex_write_en      <= id_write_en;
+	     id_ex_write_en      <= id_write_en ;
 	     id_ex_mem_write_en  <= id_mem_write_en;
 	     id_ex_mem_read_en   <= id_mem_read_en;
 	     id_ex_branch_inst   <= id_branch_inst;
@@ -411,7 +420,7 @@ module processor
 
    decoder decoder_0
      (
-      .ip_inst(if_inst_from_imem),
+      .ip_inst(id_inst_from_imem),
 
       .write_en(id_write_en),
       .immediate(id_immediate),
