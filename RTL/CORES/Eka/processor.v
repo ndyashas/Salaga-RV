@@ -3,6 +3,9 @@
  */
 
 module processor
+  #(
+    parameter RESET_PC_VALUE=32'h00000000
+    )
   (
    // General inputs
    clk,
@@ -83,7 +86,7 @@ module processor
 
    always @(posedge clk)
      begin
-	if (reset) PC <= 0;
+	if (reset) PC <= RESET_PC_VALUE;
 	else       PC <= next_pc;
      end
 

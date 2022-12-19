@@ -3,6 +3,9 @@
  */
 
 module processor
+  #(
+    parameter RESET_PC_VALUE=32'h00000000
+    )
   (
    // General inputs
    clk,
@@ -80,7 +83,7 @@ module processor
 
    always @(posedge clk)
      begin
-	if (reset)             PC     <= 0;
+	if (reset)             PC     <= RESET_PC_VALUE;
 	else if (!id_stall)    PC     <= next_pc;
      end
 
@@ -167,14 +170,14 @@ module processor
 
 	// Generate forwarding signals
 	// Forwarding from MEM to a junior in EX
-	id_rs1_matches_s1        = ((id_read_addr1 != 5'h0) && (id_read_addr1 == id_ex_write_addr) && (id_ex_write_en) && (~id_store_inst)) ? 1'b1 : 1'b0;
+	id_rs1_matches_s1        = ((id_read_addr1 != 5'h0) && (id_read_addr1 == id_ex_write_addr) && (id_ex_write_en) && (~id_alu_src1_from_pc)) ? 1'b1 : 1'b0;
 
 	// Forwarding from WB to a junior in EX
-	id_rs2_matches_s1        = ((id_read_addr2 != 5'h0) && (id_read_addr2 == id_ex_write_addr) && (id_ex_write_en) && (~id_store_inst)) ? 1'b1 : 1'b0;
+	id_rs2_matches_s1        = ((id_read_addr2 != 5'h0) && (id_read_addr2 == id_ex_write_addr) && (id_ex_write_en) && (~id_alu_src2_from_imm)) ? 1'b1 : 1'b0;
 
 	// Forwarding from WB to a junior in EX
-	id_rs1_matches_s2        = ((id_read_addr1 != 5'h0) && (id_read_addr1 == ex_mem_write_addr) && (ex_mem_write_en) && (~id_store_inst)) ? 1'b1 : 1'b0;
-	id_rs2_matches_s2        = ((id_read_addr2 != 5'h0) && (id_read_addr2 == ex_mem_write_addr) && (ex_mem_write_en) && (~id_store_inst)) ? 1'b1 : 1'b0;
+	id_rs1_matches_s2        = ((id_read_addr1 != 5'h0) && (id_read_addr1 == ex_mem_write_addr) && (ex_mem_write_en) && (~id_alu_src1_from_pc)) ? 1'b1 : 1'b0;
+	id_rs2_matches_s2        = ((id_read_addr2 != 5'h0) && (id_read_addr2 == ex_mem_write_addr) && (ex_mem_write_en) && (~id_alu_src2_from_imm)) ? 1'b1 : 1'b0;
 
 	// Forwarding signal for store junior
 	id_rs2_matches_s1_st     = ((id_read_addr2 != 5'h0) && (id_read_addr2 == id_ex_write_addr) && (id_ex_write_en)) ? 1'b1 : 1'b0;

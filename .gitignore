@@ -14,3 +14,4 @@ obj_dir/
 a.out
 wave.vcd
 *_actual.dump
+tests/sw-tests-no-gui/**/*.fill

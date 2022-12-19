@@ -1,0 +1,29 @@
+name: rv32i sw no-gui tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Eka-sw-no-gui-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt install iverilog
+      - name: Run test
+        run: |
+          ./tests/sw-tests-no-gui/run_unit_tests.sh Eka
+
+  Jala-sw-no-gui-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt install iverilog
+      - name: Run test
+        run: |
+          ./tests/sw-tests-no-gui/run_unit_tests.sh Jala
