@@ -4,7 +4,7 @@ ENTRY(_start)
 
 MEMORY
 {
-	MEM (RWX) : ORIGIN = 0x00000000, LENGTH = 0x00001000 /* 4 KBytes */
+	MEM (RWX) : ORIGIN = 0x00000000, LENGTH = 0x00002000 /* 8 KBytes */
 }
 
 SECTIONS
@@ -23,4 +23,6 @@ SECTIONS
 		*(.*);
 		. = ALIGN(4);
 	} > MEM
+
+	PROVIDE(end = .);
 }

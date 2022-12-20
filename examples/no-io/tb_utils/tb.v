@@ -99,8 +99,8 @@ module tb;
    SoC
      #(
        .RESET_PC_VALUE(32'h00000050),
-       .IMEM_SIZE_IN_BYTES(1024),
-       .DMEM_SIZE_IN_BYTES(1024)
+       .IMEM_SIZE_IN_BYTES(2048),
+       .DMEM_SIZE_IN_BYTES(2048)
        )
      SoC_0
      (
