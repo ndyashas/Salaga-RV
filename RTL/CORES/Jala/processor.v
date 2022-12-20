@@ -74,6 +74,8 @@ module processor
    reg [31:0] 	     if_id_ip_inst_from_imem;
 
    reg [31:0] 	     if_id_PC;
+   reg 		     flush_if;
+   reg 		     if_id_flush_if;
 
    always @(*)
      begin
@@ -93,8 +95,11 @@ module processor
 	if (!id_stall)
 	  begin
 	     if_id_ip_inst_from_imem       <= ip_inst_from_imem;
+	     if_id_PC                      <= PC;
 	  end
-	if_id_PC                      <= PC;
+
+	if (reset)           if_id_flush_if <= 1'b1;
+	else if (!id_stall)  if_id_flush_if <= flush_if;
      end
 
    //--------------------------- ID Stage  ---------------------------
@@ -149,7 +154,6 @@ module processor
    reg 	       id_ex_branch_inst;
    reg 	       id_ex_jump_inst;
 
-   reg 	       flush_if;
    reg 	       flush_id;
    reg 	       flush_ex;
 
@@ -161,7 +165,7 @@ module processor
 	flush_id                 = ex_mem_branch_successful | ex_mem_jump_inst;
 	flush_ex                 = ex_mem_branch_successful | ex_mem_jump_inst;
 
-	id_inst_from_imem[0]     = (reset | flush_if) ? 1'b0 : if_id_ip_inst_from_imem[0];
+	id_inst_from_imem[0]     = (reset | if_id_flush_if) ? 1'b0 : if_id_ip_inst_from_imem[0];
 	id_inst_from_imem[31:1]  = if_id_ip_inst_from_imem[31:1];
 
 	id_read_addr1            = (id_lui_inst == 1'b1) ? 5'h0 : if_id_ip_inst_from_imem[19:15];
@@ -462,7 +466,7 @@ module processor
 
       .minus_is_zero(ex_minus_is_zero),
       .less_than(ex_less_than),
-      .less_than_unsigned(less_than_unsigned),
+      .less_than_unsigned(ex_less_than_unsigned),
       .alu_result(ex_alu_result)
       );
 
