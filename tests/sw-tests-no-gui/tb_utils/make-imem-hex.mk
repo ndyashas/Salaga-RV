@@ -3,7 +3,7 @@ CC          := $(CC_PREFIX)-gcc
 PYTHON      := python3
 
 MACH        := rv32i
-CFLAGS      := -Wall -static -lm -lgcc -march=rv32i -mabi=ilp32 -o0
+CFLAGS      := -Wall -static -lm -lgcc -march=rv32i -mabi=ilp32 -O0
 LDFLAGS     := -nostartfiles -T ../tb_utils/linker-file.ld
 
 all: imem.fill

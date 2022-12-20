@@ -51,13 +51,13 @@ module tb;
 	     $fdisplay(dump_file, "Memory location %d : %h", 4*i, SoC_0.dmem_0.mem[i]);
 	  end
 
-	// Dump the contents of register file into a file
-	dump_file = $fopen("rf_actual.dump");
-	for (i = 0; i < 32; i = i + 1)
-	  begin
-	     $fdisplay(dump_file, "Register %d : %h", i, SoC_0.processor_0.register_file_0.mem[i]);
-	  end
-	$fclose(dump_file);
+	// // Dump the contents of register file into a file
+	// dump_file = $fopen("rf_actual.dump");
+	// for (i = 0; i < 32; i = i + 1)
+	//   begin
+	//      $fdisplay(dump_file, "Register %d : %h", i, SoC_0.processor_0.register_file_0.mem[i]);
+	//   end
+	// $fclose(dump_file);
 	$finish;
      end
 
@@ -86,12 +86,12 @@ module tb;
 	     $fdisplay(dump_file, "Memory location %d : %h", 4*i, SoC_0.dmem_0.mem[i]);
 	  end
 
-	// Dump the contents of register file into a file
-	dump_file = $fopen("rf_actual.dump");
-	for (i = 0; i < 32; i = i + 1)
-	  begin
-	     $fdisplay(dump_file, "Register %d : %h", i, SoC_0.processor_0.register_file_0.mem[i]);
-	  end
+	// // Dump the contents of register file into a file
+	// dump_file = $fopen("rf_actual.dump");
+	// for (i = 0; i < 32; i = i + 1)
+	//   begin
+	//      $fdisplay(dump_file, "Register %d : %h", i, SoC_0.processor_0.register_file_0.mem[i]);
+	//   end
 	$fclose(dump_file);
 	$finish;
      end
