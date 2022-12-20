@@ -26,6 +26,16 @@ module SoC
    wire        data_valid;
    wire [31:0 ] data_from_dmem;
 
+   // End of simulation is detected by a call to ebreak
+   reg [31:0] 	inst_from_imem_to_proc;
+
+   always @(*)
+     begin
+	// Stop sending new instructions if 'ebreak' is encountered
+	if (inst_from_imem_to_proc == 32'h0010_0073) inst_from_imem_to_proc = 32'h0010_0073;
+	else                                         inst_from_imem_to_proc = inst_from_imem;
+     end
+
    // Instantiations of processor, imem, and dmem
    // Connect processor to IMEM and DMEM
    processor #(.RESET_PC_VALUE(RESET_PC_VALUE)) processor_0
@@ -35,7 +45,7 @@ module SoC
 
       .op_inst_addr(inst_addr),
       .ip_inst_valid(inst_valid),
-      .ip_inst_from_imem(inst_from_imem),
+      .ip_inst_from_imem(inst_from_imem_to_proc),
 
       .op_data_addr(data_addr),
 

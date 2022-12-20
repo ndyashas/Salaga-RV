@@ -1,6 +1,6 @@
 OUTPUT_ARCH( "riscv" )
 
-ENTRY(main)
+ENTRY(_start)
 
 MEMORY
 {
@@ -13,12 +13,14 @@ SECTIONS
 	{
 		. = ALIGN(4);
 		KEEP(*(.pinned_array_section));
+		. = ALIGN(4);
 	} > MEM
 
 	everything 0x00000050 :
 	{
 		. = ALIGN(4);
-		program.o (.text);
+		start.o (.text);
 		*(.*);
+		. = ALIGN(4);
 	} > MEM
 }

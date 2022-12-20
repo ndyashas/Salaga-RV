@@ -37,8 +37,8 @@ module tb;
 
 	// Wait till program complestes.
 	// Program completion is detected by fetching
-	// the instruction 32'h0;
-	wait(SoC_0.inst_from_imem == 32'h0);
+	// the 'ebreak' instruction;
+	wait(SoC_0.inst_from_imem == 32'h0010_0073);
 
 	$display("The program completed in %d cycles", clocks);
 	// Drain pipelines
@@ -77,7 +77,7 @@ module tb;
    initial
      begin
 	// To avoid infinite loops
-	#10000000
+	repeat(20000) @(negedge clk);
 	  $display("Test timeout after %d cycles", clocks);
 	// Dump the contents of DMEM into a file
 	dump_file = $fopen("dmem_actual.dump");
@@ -96,7 +96,7 @@ module tb;
 	$finish;
      end
 
-   SoC 
+   SoC
      #(
        .RESET_PC_VALUE(32'h00000050),
        .IMEM_SIZE_IN_BYTES(1024),
