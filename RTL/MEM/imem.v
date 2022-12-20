@@ -6,7 +6,7 @@
 
 module imem
   #(
-    parameter SIZE_IN_BYTES=1024
+    parameter SIZE_IN_WORDS=1024
    )
   (
    ip_inst_addr,
@@ -19,12 +19,12 @@ module imem
    output reg 	      op_inst_valid;
 
    // Instruction memory
-   reg [31:0] 	     mem [SIZE_IN_BYTES-1:0];
+   reg [31:0] 	     mem [SIZE_IN_WORDS-1:0];
 
    always @(*)
      begin : imem_block
 	op_inst_valid     = 1'b1;
-	op_inst_from_imem = mem[ip_inst_addr[$clog2(SIZE_IN_BYTES)-1+2:2]];
+	op_inst_from_imem = mem[ip_inst_addr[$clog2(SIZE_IN_WORDS)-1+2:2]];
      end
 
 endmodule

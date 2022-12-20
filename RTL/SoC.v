@@ -5,8 +5,8 @@
 module SoC
   #(
     parameter RESET_PC_VALUE=32'h00000000,
-    parameter IMEM_SIZE_IN_BYTES=32,
-    parameter DMEM_SIZE_IN_BYTES=32
+    parameter IMEM_SIZE_IN_WORDS=32,
+    parameter DMEM_SIZE_IN_WORDS=32
     )
   (
    input clk,
@@ -58,14 +58,14 @@ module SoC
       .ip_data_from_dmem(data_from_dmem)
       );
 
-   imem #(.SIZE_IN_BYTES(IMEM_SIZE_IN_BYTES)) imem_0
+   imem #(.SIZE_IN_WORDS(IMEM_SIZE_IN_WORDS)) imem_0
      (
       .ip_inst_addr(inst_addr),
       .op_inst_valid(inst_valid),
       .op_inst_from_imem(inst_from_imem)
       );
 
-   dmem #(.SIZE_IN_BYTES(DMEM_SIZE_IN_BYTES)) dmem_0
+   dmem #(.SIZE_IN_WORDS(DMEM_SIZE_IN_WORDS)) dmem_0
      (
       .clk(clk),
 

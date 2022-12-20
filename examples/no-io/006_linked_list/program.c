@@ -39,7 +39,7 @@ int main()
 
     // Append nodes to the list
     for (i = 0; i < PINNED_ARRAY_SIZE; ++i) {
-	pinned_array[i] = (unsigned int)append(&root, i*2);
+	append(&root, i*2);
     }
 
     // Reverse and place elements in the pinned_array for inspection

@@ -5,7 +5,7 @@
 
 module dmem
   #(
-    parameter SIZE_IN_BYTES=1024
+    parameter SIZE_IN_WORDS=1024
    )
   (
    clk,
@@ -36,13 +36,13 @@ module dmem
    reg [31:0] 	     mask;
 
    // Data memory
-   reg [31:0] 	     mem [SIZE_IN_BYTES-1:0];
+   reg [31:0] 	     mem [SIZE_IN_WORDS-1:0];
 
    always @(*)
      begin : dmem_read_block
 	// Ignore ip_data_rd for now. Treat all cycles as read cycles.
 	op_data_valid     = 1'b1;
-	op_data_from_dmem = mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]];
+	op_data_from_dmem = mem[ip_data_addr[$clog2(SIZE_IN_WORDS)-1+2:2]];
      end
 
    always @(posedge clk)
@@ -50,13 +50,13 @@ module dmem
 	if (ip_data_wr)
 	  begin
 	     if (ip_data_mask[0])
-	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][7:0]   <= ip_data_from_proc[7:0];
+	       mem[ip_data_addr[$clog2(SIZE_IN_WORDS)-1+2:2]][7:0]   <= ip_data_from_proc[7:0];
 	     if (ip_data_mask[1])
-	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][15:8]  <= ip_data_from_proc[15:8];
+	       mem[ip_data_addr[$clog2(SIZE_IN_WORDS)-1+2:2]][15:8]  <= ip_data_from_proc[15:8];
 	     if (ip_data_mask[2])
-	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][23:16] <= ip_data_from_proc[23:16];
+	       mem[ip_data_addr[$clog2(SIZE_IN_WORDS)-1+2:2]][23:16] <= ip_data_from_proc[23:16];
 	     if (ip_data_mask[3])
-	       mem[ip_data_addr[$clog2(SIZE_IN_BYTES)-1+2:2]][31:24] <= ip_data_from_proc[31:24];
+	       mem[ip_data_addr[$clog2(SIZE_IN_WORDS)-1+2:2]][31:24] <= ip_data_from_proc[31:24];
 	  end
      end
 
