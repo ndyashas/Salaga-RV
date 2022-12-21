@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <salagaio.h>
 
 #define PINNED_ARRAY_SIZE 20
@@ -10,7 +11,7 @@ int main()
 
     char print_message[] = "Hello World!\n";
 
-    for (*i = 0; *i < 13; ++(*i)) {
+    for (*i = 0; *i < strlen(print_message); ++(*i)) {
         putchar(print_message[*i]);
     }
 
