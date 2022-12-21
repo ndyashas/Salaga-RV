@@ -5,6 +5,7 @@
 module SoC
   #(
     parameter RESET_PC_VALUE=32'h00000000,
+    parameter UART_IO_MM_LOC=32'h00000054,
     parameter IMEM_SIZE_IN_WORDS=32,
     parameter DMEM_SIZE_IN_WORDS=32
     )
@@ -28,13 +29,45 @@ module SoC
 
    // End of simulation is detected by a call to ebreak
    reg [31:0] 	inst_from_imem_to_proc;
+   reg 		data_rd_from_proc_to_dmem;
+   reg 		data_wr_from_proc_to_dmem;
+   reg [31:0] 	data_from_dmem_to_proc;
 
    always @(*)
      begin
 	// Stop sending new instructions if 'ebreak' is encountered
 	if (inst_from_imem_to_proc == 32'h0010_0073) inst_from_imem_to_proc = 32'h0010_0073;
 	else                                         inst_from_imem_to_proc = inst_from_imem;
+
+	// MMIO
+	data_rd_from_proc_to_dmem   = data_rd;;
+	data_wr_from_proc_to_dmem   = data_wr;;
+	data_from_dmem_to_proc      = data_from_dmem;
+	if (data_addr == UART_IO_MM_LOC)
+	  begin
+	     // Reading from device
+	     if (data_rd)
+	       begin
+		  // TODO
+		  data_from_dmem_to_proc = 32'h1;
+	       end
+	  end
      end
+
+`ifdef _SIM_
+   always @(posedge clk)
+     begin
+	// Writing to device
+	if (data_addr == UART_IO_MM_LOC)
+	  begin
+	     if (data_wr)
+	       begin
+		  $write("%c", data_from_proc[7:0]);
+		  $fflush(32'h8000_0001);
+	       end
+	  end
+     end
+`endif
 
    // Instantiations of processor, imem, and dmem
    // Connect processor to IMEM and DMEM
@@ -55,7 +88,7 @@ module SoC
 
       .op_data_rd(data_rd),
       .ip_data_valid(data_valid),
-      .ip_data_from_dmem(data_from_dmem)
+      .ip_data_from_dmem(data_from_dmem_to_proc)
       );
 
    imem #(.SIZE_IN_WORDS(IMEM_SIZE_IN_WORDS)) imem_0
@@ -71,11 +104,11 @@ module SoC
 
       .ip_data_addr(data_addr),
 
-      .ip_data_wr(data_wr),
+      .ip_data_wr(data_wr_from_proc_to_dmem),
       .ip_data_mask(data_mask),
       .ip_data_from_proc(data_from_proc),
 
-      .ip_data_rd(data_rd),
+      .ip_data_rd(data_rd_from_proc_to_dmem),
       .op_data_valid(data_valid),
       .op_data_from_dmem(data_from_dmem)
       );

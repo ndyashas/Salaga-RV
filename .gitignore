@@ -14,4 +14,5 @@ obj_dir/
 a.out
 wave.vcd
 *_actual.dump
-examples/no-io/**/*.fill
+examples/**/*.fill
+firmware/**/*.a
