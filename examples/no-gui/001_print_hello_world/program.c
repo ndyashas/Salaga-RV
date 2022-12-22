@@ -15,5 +15,7 @@ int main()
         putchar(print_message[*i]);
     }
 
+    free(i);
+
     return 0;
 }
