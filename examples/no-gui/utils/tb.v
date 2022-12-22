@@ -77,7 +77,7 @@ module tb;
    initial
      begin
 	// To avoid infinite loops
-	repeat(20000) @(negedge clk);
+	repeat(50000) @(negedge clk);
 	  $display("Test timeout after %d cycles", clocks);
 	// Dump the contents of DMEM into a file
 	dump_file = $fopen("dmem_actual.dump");

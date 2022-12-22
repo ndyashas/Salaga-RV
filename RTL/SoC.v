@@ -32,6 +32,7 @@ module SoC
    reg 		data_rd_from_proc_to_dmem;
    reg 		data_wr_from_proc_to_dmem;
    reg [31:0] 	data_from_dmem_to_proc;
+   reg 		uart_wr;
 
    always @(*)
      begin
@@ -52,6 +53,8 @@ module SoC
 		  data_from_dmem_to_proc = 32'h1;
 	       end
 	  end
+
+	uart_wr = data_wr && (data_addr == UART_IO_MM_LOC);
      end
 
 `ifdef _SIM_
