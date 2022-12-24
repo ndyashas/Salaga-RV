@@ -32,36 +32,41 @@ module SoC
    reg 		data_rd_from_proc_to_dmem;
    reg 		data_wr_from_proc_to_dmem;
    reg [31:0] 	data_from_dmem_to_proc;
-   reg 		uart_wr;
+   reg 		uart_access;
+
 
    always @(*)
      begin
 	// Stop sending new instructions if 'ebreak' is encountered
 	if (inst_from_imem_to_proc == 32'h0010_0073) inst_from_imem_to_proc = 32'h0010_0073;
 	else                                         inst_from_imem_to_proc = inst_from_imem;
+     end
 
+
+   always @(*)
+     begin
+	uart_access                 = data_addr[31];
 	// MMIO
-	data_rd_from_proc_to_dmem   = data_rd;;
-	data_wr_from_proc_to_dmem   = data_wr;;
+	data_rd_from_proc_to_dmem   = data_rd;
+	data_wr_from_proc_to_dmem   = data_wr;
 	data_from_dmem_to_proc      = data_from_dmem;
-	if (data_addr == UART_IO_MM_LOC)
+
+	if (uart_access)
 	  begin
-	     // Reading from device
+	     data_wr_from_proc_to_dmem = 1'b0;
 	     if (data_rd)
 	       begin
 		  // TODO
 		  data_from_dmem_to_proc = 32'h1;
 	       end
 	  end
-
-	uart_wr = data_wr && (data_addr == UART_IO_MM_LOC);
      end
 
 `ifdef _SIM_
    always @(posedge clk)
      begin
 	// Writing to device
-	if (data_addr == UART_IO_MM_LOC)
+	if (uart_access)
 	  begin
 	     if (data_wr)
 	       begin

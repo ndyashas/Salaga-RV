@@ -3,10 +3,10 @@
 
 /*
  * SoC will treat all access to memory which
- * have their 30th bit set to 1
+ * have the MSB bit of address set to 1
  */
 
-// UART Address
-#define _UART_MMIO_ADDR 0x00000054
+// UART Base address
+#define _UART_MMIO_BASE_ADDR 0x80000000
 
 #endif
