@@ -1,7 +1,7 @@
 .global _start
 
 _start:
-	la sp, 0
+	la sp, stack_start
 	call main
 	nop
 	nop

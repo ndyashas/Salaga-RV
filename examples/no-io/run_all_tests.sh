@@ -18,7 +18,7 @@ for test_dir in */ ; do
     [ "${test_dir%/}" == "tb_utils" ] && continue;
 
     # Run the test
-    "${test_dir}/run_test.sh" "${1}" >/dev/null 2>&1;
+    make -C "${test_dir}" "${1}" >/dev/null 2>&1;
 
     # Check the status of the test, if failed, print it out.
     if [ $? -ne 0 ]; then

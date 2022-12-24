@@ -25,4 +25,5 @@ SECTIONS
 	} > MEM
 
 	PROVIDE(end = .);
+	PROVIDE(stack_start = LENGTH(MEM));
 }

@@ -8,6 +8,6 @@ for test_dir in */ ; do
     [ "${test_dir%/}" == "gtkwave" ] && continue;
     [ "${test_dir%/}" == "tb_utils" ] && continue;
 
-    "${test_dir}/clean.sh" >/dev/null 2>&1;
+    make -C "${test_dir}" clean >/dev/null 2>&1;
 
 done
