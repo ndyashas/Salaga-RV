@@ -5,7 +5,6 @@
 module SoC
   #(
     parameter RESET_PC_VALUE=32'h00000000,
-    parameter UART_IO_MM_LOC=32'h00000054,
     parameter IMEM_SIZE_IN_WORDS=32,
     parameter DMEM_SIZE_IN_WORDS=32
     )
