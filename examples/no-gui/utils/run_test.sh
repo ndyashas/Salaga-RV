@@ -11,5 +11,5 @@ make -f ../utils/make-imem-hex.mk
 cp imem.fill dmem.fill
 
 # Compile design and run
-iverilog -D_SIM_ ../utils/tb.v ../../../RTL/SoC.v ../../../RTL/MEM/* ../../../RTL/CORES/"${2}"/* -o test_bin
+iverilog -D_SIM_ ../utils/tb.v ../../../RTL/SoC.v ../../../RTL/MEM/* ../../../RTL/IO/* ../../../RTL/CORES/"${2}"/* -o test_bin
 vvp test_bin

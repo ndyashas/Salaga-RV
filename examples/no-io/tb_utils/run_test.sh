@@ -11,7 +11,7 @@ make -f ../tb_utils/make-imem-hex.mk
 cp imem.fill dmem.fill
 
 # Compile design and run
-iverilog ../tb_utils/tb.v ../../../RTL/SoC.v ../../../RTL/MEM/* ../../../RTL/CORES/"${2}"/* -o test_bin
+iverilog ../tb_utils/tb.v ../../../RTL/SoC.v ../../../RTL/MEM/* ../../../RTL/IO/* ../../../RTL/CORES/"${2}"/* -o test_bin
 vvp test_bin
 
 # # Check correctness

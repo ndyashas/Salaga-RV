@@ -5,7 +5,7 @@
 #define PINNED_ARRAY_SIZE 20
 unsigned int pinned_array[PINNED_ARRAY_SIZE] __attribute__((section(".pinned_array_section")));
 
-#define WIDTH 20
+#define WIDTH 10
 
 void print_negative_slope()
 {

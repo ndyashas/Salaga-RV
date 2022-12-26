@@ -4,6 +4,7 @@
 
 module tb;
    reg 	clk, reset;
+   wire tx, rx;
 
    // Keeping track of parameter
    integer 	clocks;
@@ -80,7 +81,9 @@ module tb;
    SoC SoC_0
      (
       .clk(clk),
-      .reset(reset)
+      .reset(reset),
+      .tx(tx),
+      .rx(rx)
       );
 
 endmodule
