@@ -25,7 +25,7 @@ module processor
 
    op_data_rd,
    ip_data_valid,
-   ip_data_from_dmem,
+   ip_data_from_dmem
    );
 
    // General inputs

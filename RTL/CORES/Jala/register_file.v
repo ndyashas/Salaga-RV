@@ -11,7 +11,7 @@ module register_file
 
    write_en,
    write_addr,
-   write_data,
+   write_data
    );
 
    input wire 	     clk;

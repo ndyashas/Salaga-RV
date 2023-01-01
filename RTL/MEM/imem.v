@@ -11,7 +11,7 @@ module imem
   (
    ip_inst_addr,
    op_inst_valid,
-   op_inst_from_imem,
+   op_inst_from_imem
    );
 
    input wire [31:0]  ip_inst_addr;
