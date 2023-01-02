@@ -18,7 +18,7 @@ For now, simulation is done using `iverilog`. However, I soon plan on adding sup
 sudo apt install iverilog
 ```
 
-### 2) Install [RISC-V GNU Toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain#installation-newliblinux-multilib) (*Not required if you plan on just running code under the (tests)[tests] directory*)
+### 2) Install [RISC-V GNU Toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain#installation-newliblinux-multilib) (*Not required if you plan on just running code under the [tests](tests) directory*)
 Follow instructions given at [RISC-V GNU Toolchain GitHub repository](https://github.com/riscv-collab/riscv-gnu-toolchain#installation-newliblinux-multilib). You will need the `riscv64-unknown-elf-*` binaries to be installed to compile software for Salaga-RV.
 
 ## Try it out!
