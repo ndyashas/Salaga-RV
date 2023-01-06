@@ -32,13 +32,31 @@ cd Salaga-RV
 
 ## 1) Running examples
 Examples are split into <!--three--> two categories.
-<!-- - [no-io](README.md#examples-with-no-io-operations) -->
+- [gui](README.md#examples-with-gui-output)
 - [no-gui](README.md#examples-with-no-gui-output)
-- gui (WIP)
+<!-- - [no-io](README.md#examples-with-no-io-operations) -->
 
 Go into the [examples](examples) directory
 ```
 cd examples
+```
+
+### Examples with GUI output
+```
+cd no-gui
+```
+Code under [gui](examples/gui) are examples where the processor supports display functions such as [setting color to a pixel, or drawing a rectangle](https://github.com/ndyashas/Salaga-RV/blob/main/firmware/salagalib/include/slg_display.h)!. Although the drivers are not very realistic, I felt the way it is implemented now is a good stage before I jump into a more realistic driver implementation.
+
+Eg: To run the simple display-testing program, run the [001_display_test](examples/gui/001_display_test) example as follows
+```
+cd 001_display_test
+```
+```
+make Jala
+```
+The above command will compile the simulation model, and generate an executable. To run the simulation,
+```
+./obj_dir/Vtb
 ```
 
 <!--
@@ -83,41 +101,24 @@ make Jala
 ```
 This should print out soomething as follows on your terminal
 ```
-*                   
-  *                 
-    *               
-      *             
-        *           
-          *         
-            *       
-              *     
-                *   
-                  * 
-                    
-                  * 
-                *   
-              *     
-            *       
-          *         
-        *           
-      *             
-    *               
-  *                 
-*                   
-  *                 
-    *               
-      *             
-        *           
-          *         
-            *       
-              *     
-                *   
-                  * 
-The program completed in       32346 cycles
-```
+         
+  *       
+    *     
+      *   
+        * 
+          
+        * 
+      *   
+    *     
+  *       
+*         
+  *       
+    *     
+      *   
+        * 
 
-### Examples with GUI output
-WIP
+The program completed in       41108 cycles
+```
 
 ## 2) Running tests:
 Go into the [tests](tests) directory
