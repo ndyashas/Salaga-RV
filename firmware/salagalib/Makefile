@@ -8,7 +8,7 @@ INC_DIRS    := -Iinclude/
 CFLAGS      := -Wall -march=rv32i -mabi=ilp32 -O0 $(INC_DIRS)
 
 
-IO_OBJS  := UART.o print.o
+IO_OBJS  := UART.o print.o slg_display.o
 
 
 all: libsalagaio.a

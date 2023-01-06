@@ -13,7 +13,11 @@ module SoC
    reset,
 
    tx,
-   rx
+   rx,
+
+   disp_en,
+   disp_DC,
+   disp_bus
    );
 
    input wire  clk;
@@ -21,6 +25,10 @@ module SoC
 
    output wire tx;
    input wire  rx;
+
+   output reg  disp_en;
+   output reg  disp_DC;
+   output reg [31:0] disp_bus;
 
    wire [31:0] inst_addr;
    wire        inst_valid;
@@ -35,6 +43,7 @@ module SoC
    wire [31:0] data_from_dmem;
 
    // End of simulation is detected by a call to ebreak
+   reg 	        mmio_access;
    reg [31:0] 	inst_from_imem_to_proc;
    reg 		uart_access;
    reg 		uart_wr;
@@ -55,10 +64,12 @@ module SoC
 	else                                         inst_from_imem_to_proc = inst_from_imem;
      end
 
-   // UART IO
+   // IO
    always @(*)
      begin
-	uart_access                 = data_addr[31];
+	mmio_access                 = data_addr[31] & (data_wr | data_rd);
+	// UART
+	uart_access                 = mmio_access & data_addr[30];
 	uart_wr                     = uart_access & data_wr;
 	uart_rd                     = uart_access & data_rd;
 	uart_tx_data                = data_from_proc[7:0];
@@ -66,18 +77,12 @@ module SoC
 
 	data_to_proc                = (uart_access == 1'b1) ? uart_data_to_proc : data_from_dmem;
 	data_wr_to_dmem             = (uart_access == 1'b1) ? 1'b0 : data_wr;
-     end
 
-// `ifdef _SIM_
-//    always @(posedge clk)
-//      begin
-// 	if (wr)
-// 	  begin
-// 	     $write("%c", tx_data);
-// 	     $fflush(32'h8000_0001);
-// 	  end
-//      end
-// `endif
+	// DISPLAY
+	disp_en                     = mmio_access & data_addr[29];
+	disp_DC                     = data_from_proc[31];
+	disp_bus                    = data_from_proc;
+     end
 
 
    // Instantiations of the IO
