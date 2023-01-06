@@ -9,5 +9,6 @@
 #define SALAGA_DISPLAY_HEIGHT 180
 
 void slg_disp_set_pixel(int x, int y, int r, int g, int b);
+void slg_disp_draw_rectangle(int x, int y, int width, int height, int r, int g, int b);
 
 #endif
