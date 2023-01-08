@@ -7,5 +7,6 @@
 
 void sim_set_pixel(int x, int y, int r, int g, int b);
 void sim_draw_rectangle(int x, int y, int width, int height, int r, int g, int b);
+void sim_draw_line(int x1, int y1, int x2, int y2, Color color);
 
 #endif

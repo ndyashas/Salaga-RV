@@ -9,7 +9,8 @@ CFLAGS      := ${LIB_CFLAGS}
 CFLAGS      += -Wall -march=rv32i -mabi=ilp32 -O3 $(INC_DIRS)
 
 
-IO_OBJS  := draw_rectangle.o set_pixel.o sim_draw_rectangle.o sim_set_pixel.o
+IO_OBJS  := draw_line.o draw_rectangle.o set_pixel.o sim_draw_rectangle.o sim_set_pixel.o \
+            sim_draw_line.o
 
 
 all: libsalagagl.a

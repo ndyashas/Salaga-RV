@@ -28,6 +28,15 @@ int main()
 	sleep(50);
     }
 
+    ///--------------------- Full screen color - draw_line ---- ------------------
+    for (i = 0; i < 3; ++i) {
+	color_i = color_array[i];
+	for (row = 0; row < SALAGA_DISPLAY_HEIGHT; ++row) {
+	    draw_line(0, row, SALAGA_DISPLAY_WIDTH-1, row, color_i);
+	}
+	sleep(75);
+    }
+
     ///--------------------- Full screen color - draw_rectangle ------------------
     for (i = 0; i < 3; ++i) {
 	color_i = color_array[i];
