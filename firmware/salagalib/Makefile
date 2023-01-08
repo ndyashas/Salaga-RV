@@ -1,4 +1,4 @@
-# Compile the salagaio library
+# Compile the salagalib library
 
 CC_PREFIX   := riscv64-unknown-elf
 CC          := $(CC_PREFIX)-gcc
@@ -8,12 +8,12 @@ INC_DIRS    := -Iinclude/
 CFLAGS      := -Wall -march=rv32i -mabi=ilp32 -O0 $(INC_DIRS)
 
 
-IO_OBJS  := UART.o print.o slg_display.o
+IO_OBJS  := sleep.o
 
 
-all: libsalagaio.a
+all: libsalagalib.a
 
-libsalagaio.a: $(IO_OBJS)
+libsalagalib.a: $(IO_OBJS)
 	$(AR) rcs $@ $^
 
 %.o: %.c

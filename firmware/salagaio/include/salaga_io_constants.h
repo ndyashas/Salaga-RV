@@ -9,7 +9,4 @@
 // UART Base address
 #define _UART_MMIO_BASE_ADDR 0xC0000000
 
-// SALAGA Display base address
-#define _SLG_DISP_MMIO_BASE_ADDR 0xA0000000
-
 #endif

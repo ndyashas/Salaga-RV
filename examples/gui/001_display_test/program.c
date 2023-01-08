@@ -1,37 +1,38 @@
 #include <stdlib.h>
 #include <string.h>
-#include <salagaio.h>
+#include <salagalib.h>
+#include <salagagl.h>
 
 #define PINNED_ARRAY_SIZE 20
 unsigned int pinned_array[PINNED_ARRAY_SIZE] __attribute__((section(".pinned_array_section")));
 
 int main()
 {
-    int i, j;
+    int i, row, col;
+    Color color_i;
 
-    // Fill red by setting each pixel
-    for (i = 0; i < SALAGA_DISPLAY_HEIGHT; ++i) {
-	for (j = 0; j < SALAGA_DISPLAY_WIDTH; ++j) {
-	    slg_disp_set_pixel(j, i, 255, 0, 0);
+    Color red = {255, 0, 0};
+    Color green = {0, 255, 0};
+    Color blue = {0, 0, 255};
+
+    Color color_array[3] = {red, green, blue};
+
+    ///--------------------- Full screen color - set_pixel -----------------------
+    for (i = 0; i < 3; ++i) {
+	color_i = color_array[i];
+	for (row = 0; row < SALAGA_DISPLAY_HEIGHT; ++row) {
+	    for (col = 0; col < SALAGA_DISPLAY_WIDTH; ++col) {
+		set_pixel(col, row, color_i);
+	    }
 	}
+	sleep(50);
     }
 
-    // Fill green by using a rectangle
-    slg_disp_draw_rectangle(0, 0, SALAGA_DISPLAY_WIDTH, SALAGA_DISPLAY_HEIGHT, 0, 255, 0);
-
-    // Blue - half pixels, hald rectangle
-    for (i = 0; i < SALAGA_DISPLAY_HEIGHT / 2; ++i) {
-	for (j = 0; j < SALAGA_DISPLAY_WIDTH; ++j) {
-	    slg_disp_set_pixel(j, i, 0, 0, 255);
-	}
-    }
-    slg_disp_draw_rectangle(SALAGA_DISPLAY_HEIGHT / 2, 0, SALAGA_DISPLAY_WIDTH, SALAGA_DISPLAY_HEIGHT, 0, 0, 255);
-
-    // White from bottom to top - pixels
-    for (i = SALAGA_DISPLAY_HEIGHT - 1; i > 0; --i) {
-	for (j = SALAGA_DISPLAY_WIDTH - 1; j > 0; --j) {
-	    slg_disp_set_pixel(j, i, 255, 255, 255);
-	}
+    ///--------------------- Full screen color - draw_rectangle ------------------
+    for (i = 0; i < 3; ++i) {
+	color_i = color_array[i];
+	draw_rectangle(0, 0, SALAGA_DISPLAY_WIDTH, SALAGA_DISPLAY_HEIGHT, color_i);
+	sleep(100);
     }
 
     return 0;

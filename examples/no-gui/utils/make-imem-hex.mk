@@ -2,11 +2,11 @@ CC_PREFIX    := riscv64-unknown-elf
 CC           := $(CC_PREFIX)-gcc
 PYTHON       := python3
 
-SLG_INC_DIR  := ../../../firmware/salagalib/include
-SLG_LIB_PATH := ../../../firmware/salagalib
+SLG_IO_INC_DIR  := ../../../firmware/salagaio/include
+SLG_IO_LIB_PATH := ../../../firmware/salagaio
 
-CFLAGS       := -Wall -O0 -march=rv32i -mabi=ilp32 -static --specs=nosys.specs -I$(SLG_INC_DIR)
-LDFLAGS      := -nostartfiles -T ../utils/linker-file.ld -lm -L$(SLG_LIB_PATH) -lsalagaio
+CFLAGS       := -Wall -O0 -march=rv32i -mabi=ilp32 -static --specs=nosys.specs -I$(SLG_IO_INC_DIR)
+LDFLAGS      := -nostartfiles -T ../utils/linker-file.ld -lm -L$(SLG_IO_LIB_PATH) -lsalagaio
 
 all: imem.fill
 
@@ -25,13 +25,13 @@ start.o: ../utils/start.s
 	$(CC) -c $^ -o start.o $(CFLAGS)
 
 libsalagaio.a:
-	$(MAKE) -C $(SLG_LIB_PATH)
+	$(MAKE) -C $(SLG_IO_LIB_PATH)
 
 clean:
 	$(RM) *.o *.elf *.map *.hex *.dissasm *.bin
 
 clean_all: clean
-	$(MAKE) -C $(SLG_LIB_PATH) clean
+	$(MAKE) -C $(SLG_IO_LIB_PATH) clean
 
 
 .PHONY: all clean
