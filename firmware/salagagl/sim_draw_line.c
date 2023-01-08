@@ -28,7 +28,7 @@ void sim_draw_line(int x1, int y1, int x2, int y2, Color color) {
     int codeout;
     int x,y,dx,dy,sx,sy;
     
-    for(;;) {
+    for(x=0,y=0;;) {
 	/* Both points inside. */
 	if(code1 == 0 && code2 == 0) {
 	    break;

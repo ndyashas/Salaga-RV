@@ -50,8 +50,8 @@ module tb(clk, reset, disp_en, disp_DC, disp_bus);
    SoC
      #(
        .RESET_PC_VALUE(32'h00000050),
-       .IMEM_SIZE_IN_WORDS(2048),
-       .DMEM_SIZE_IN_WORDS(2048)
+       .IMEM_SIZE_IN_WORDS(32768),
+       .DMEM_SIZE_IN_WORDS(32768)
        )
      SoC_0
      (
