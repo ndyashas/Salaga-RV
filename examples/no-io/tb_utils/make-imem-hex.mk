@@ -10,7 +10,7 @@ all: imem.fill
 
 imem.fill: program.elf
 	$(CC_PREFIX)-objcopy -O binary $^ program.bin
-	$(PYTHON) ../tb_utils/make-ascii-bin.py program.bin $@
+	$(PYTHON) ../../../tools/make-ascii-bin.py program.bin $@
 
 program.elf: program.o start.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@

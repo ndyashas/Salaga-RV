@@ -13,9 +13,11 @@ VERILATOR_SRCS  += $(RTL_DIR)/SoC.v $(RTL_DIR)/MEM/* $(RTL_DIR)/IO/*
 
 Eka: $(VERILATOR_SRCS) $(RTL_DIR)/CORES/Eka/*
 	verilator $(VERILATOR_OPTS) $(VERILATOR_SRCS) $(RTL_DIR)/CORES/Eka/*
+	cp obj_dir/Vtb test_bin
 
 Jala: $(VERILATOR_SRCS) $(RTL_DIR)/CORES/Jala/*
 	verilator $(VERILATOR_OPTS) $(VERILATOR_SRCS) $(RTL_DIR)/CORES/Jala/*
+	cp obj_dir/Vtb test_bin
 
 clean:
-	$(RM) -r obj_dir Vtb
+	$(RM) -r obj_dir test_bin

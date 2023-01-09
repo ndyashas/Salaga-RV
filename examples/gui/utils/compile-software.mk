@@ -26,7 +26,7 @@ all: mem.fill
 
 mem.fill: program.elf
 	$(CC_PREFIX)-objcopy -O binary $^ program.bin
-	$(PYTHON) $(UTILS_SW_DIR)/make-ascii-bin.py program.bin imem.fill
+	$(PYTHON) ../../../tools/make-ascii-bin.py program.bin imem.fill
 	cp imem.fill dmem.fill
 
 program.elf: program.o start.o libsalagaio.a libsalagagl.a libsalagalib.a

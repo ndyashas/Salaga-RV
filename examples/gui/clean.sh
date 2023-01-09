@@ -7,6 +7,6 @@ for test_dir in */ ; do
     [ -L "${test_dir%/}" ] && continue
     [ "${test_dir%/}" == "utils" ] && continue;
 
-    make -C "${test_dir}" clean;
+    make -C "${test_dir}" clean >/dev/null 2>&1;
 
 done

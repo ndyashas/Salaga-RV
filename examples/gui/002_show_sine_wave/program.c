@@ -35,7 +35,7 @@ int main()
 
     print_str("Cosine wave!\0");
     prev_x = 0;
-    prev_y = 0;
+    prev_y = SALAGA_DISPLAY_HEIGHT/4;
     for (x = 0; x < SALAGA_DISPLAY_WIDTH - 1; x += width) {
 	y = (int)((SALAGA_DISPLAY_HEIGHT/2) - ((SALAGA_DISPLAY_HEIGHT/4) * cos(x*resolution)));
 	draw_line(prev_x, prev_y, x, y, red);
@@ -45,7 +45,7 @@ int main()
 
     print_str("Sine + Cosine wave!\0");
     prev_x = 0;
-    prev_y = 0;
+    prev_y = SALAGA_DISPLAY_HEIGHT/4;
     for (x = 0; x < SALAGA_DISPLAY_WIDTH - 1; x += width) {
 	y = (int)((SALAGA_DISPLAY_HEIGHT/2) - ((SALAGA_DISPLAY_HEIGHT/4) * (sin(x*resolution) + cos(x*resolution))));
 	draw_line(prev_x, prev_y, x, y, blue);

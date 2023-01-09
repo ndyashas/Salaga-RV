@@ -12,7 +12,7 @@ all: imem.fill
 
 imem.fill: program.elf
 	$(CC_PREFIX)-objcopy -O binary $^ program.bin
-	$(PYTHON) ../utils/make-ascii-bin.py program.bin $@
+	$(PYTHON) ../../../tools/make-ascii-bin.py program.bin $@
 
 program.elf: program.o start.o libsalagaio.a
 	$(CC) program.o start.o -o $@ $(CFLAGS) $(LDFLAGS)
