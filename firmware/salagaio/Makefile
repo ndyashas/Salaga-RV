@@ -5,7 +5,7 @@ CC          := $(CC_PREFIX)-gcc
 AR          := $(CC_PREFIX)-ar
 
 INC_DIRS    := -Iinclude/
-CFLAGS      := -Wall -march=rv32i -mabi=ilp32 -O0 $(INC_DIRS)
+CFLAGS      := -Wall -march=rv32i -mabi=ilp32 -O3 $(INC_DIRS)
 
 
 IO_OBJS  := UART.o print.o

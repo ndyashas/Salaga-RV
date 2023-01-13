@@ -8,7 +8,7 @@ sim: software hardware
 	./obj_dir/Vtb
 
 # Compiling software
-software: program.c
+software:
 	$(MAKE) -f $(UTILS_DIR)/compile-software.mk
 
 # Compile a synthesizable model of the hardware
